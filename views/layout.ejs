@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js" lang="en" ng-app="vissy" ng-controller="AppCtrl">
   <head>
     <title>New Sails App</title>
-
+    <meta charset="utf-8" />
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -29,7 +29,11 @@
     -->
 
     <!--STYLES-->
+    <link rel="stylesheet" href="/styles/app.css">
+    <link rel="stylesheet" href="/styles/importer.css">
     <!--STYLES END-->
+
+    <script src="/bower_components/modernizr/modernizr.js"></script>
   </head>
 
   <body>
@@ -58,9 +62,7 @@
               stringfile before they're served.
     -->
 
-    <!--TEMPLATES-->
-    <!--TEMPLATES END-->
-
+  
 
     <!--
 
@@ -86,6 +88,28 @@
     -->
 
     <!--SCRIPTS-->
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="/js/dependencies/sails.io.js"></script>
+    <script src="/bower_components/angular-sails/dist/angular-sails.js"></script>
+    <script src="/bower_components/lodash/dist/lodash.js"></script>
+    <script src="/bower_components/moment/moment.js"></script>
+    <script src="/bower_components/angular-moment/angular-moment.js"></script>
+    <script src="/bower_components/angular-translate/angular-translate.js"></script>
+    <script src="/bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+    <script src="/bower_components/ng-table/ng-table.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/isotope/jquery.isotope.js"></script>
+    <script src="/bower_components/angular-isotope/dist/angular-isotope.js"></script>
+    <script src="/bower_components/angular-foundation/mm-foundation.js"></script>
+    <script src="/src/app/app.js"></script>
     <!--SCRIPTS END-->
+
+
+    <!--TEMPLATES-->
+    <script type="text/javascript" src="/templates.js"></script>
+    <!--TEMPLATES END-->
+
+
   </body>
 </html>

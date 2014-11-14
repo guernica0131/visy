@@ -7,6 +7,7 @@
   "dependencies": {
     "sails": "~0.10.5",
     "sails-disk": "~0.10.0",
+    "chromedriver": "^2.10.0-1",
     "rc": "~0.5.0",
     "include-all": "~0.1.3",
     "ejs": "~0.8.4",
@@ -21,7 +22,21 @@
     "grunt-contrib-uglify": "~0.4.0",
     "grunt-contrib-cssmin": "~0.9.0",
     "grunt-contrib-less": "0.11.1",
-    "grunt-contrib-coffee": "~0.10.1"
+    "grunt-contrib-coffee": "~0.10.1",
+    "grunt-html2js": "~0.1.9",
+    "bcrypt": "~0.7.7",
+    "validator": "~3.5.1",
+    "sails-generate-auth": "~0.2.0",
+    "moment": "^2.5.1",
+    "passport": "~0.2.0",
+    "passport-facebook": "^1.0.3",
+    "passport-github": "^0.1.5",
+    "passport-google": "^0.3.0",
+    "passport-google-oauth": "^0.1.5",
+    "passport-local": "~1.0.0",
+    "passport-twitter": "^1.0.2",
+    "validator": "~3.22.1",
+    "grunt-contrib-compass ": "~1.0.1"
   },
   "scripts": {
     "start": "node app.js",
@@ -33,5 +48,29 @@
     "url": "git://github.com/guernica0131/Vissy.git"
   },
   "author": "guernica0131",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "mocha": "^1.21.3",
+    "assert": "^1.1.1",
+    "sinon": "^1.10.3",
+    "grunt-mocha-istanbul": "^1.5.0",
+    "grunt-mocha-test": "^0.11.0",
+    "protractor": "^1.0.0",
+    "karma": "^0.12.19",
+    "grunt-karma": "^0.8.3",
+    "grunt-protractor-runner": "^1.1.0",
+    "angular-cookies": "^1.2.19",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-coverage": "^0.2.4",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-html2js-preprocessor": "^0.1.0",
+    "karma-coffee-preprocessor": "^0.2.1",
+    "karma-jasmine": "^0.1.5",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-script-launcher": "^0.1.0",
+    "requirejs": "^2.1.14",
+    "karma-requirejs": "^0.2.2",
+    "bootswatch": "^3.0.0",
+    "should": "^4.0.4"
+  }
 }
