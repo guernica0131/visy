@@ -6,14 +6,16 @@
         'ui.router',
         'ngSails',
         'angularMoment',
-        //'lodash',
         'angularMoment',
         'mm.foundation',
         'templates-app',
-        //'services',
-        //'models',
+        'services',
+        'models',
+        'directives',
+        'vissy.viewA',
+        'vissy.viewB'
         //'rxDataTable',
-        'ngTable',
+        //'ngTable',
     ])
 
     // .config(['$stateProvider', '$urlRouterProvider', '$locationProvider',

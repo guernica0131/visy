@@ -42,6 +42,7 @@ var jsFilesToInject = [
     'bower_components/isotope/jquery.isotope.js',
     'bower_components/angular-isotope/dist/angular-isotope.js',
     'bower_components/angular-foundation/mm-foundation.js',
+    'bower_components/lodash/dist/lodash.js',
     //Load sails.io before everything else
     'js/dependencies/sails.io.js',
 
