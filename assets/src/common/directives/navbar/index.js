@@ -1,3 +1,7 @@
+/*
+* This directive manages the navbar including the user auth login logout functions.
+* The user auth function functionality should be moved to any other directive.
+*/
 angular.module('directive.navbar', [])
 
 .directive('navBar', ["Authenticate",
@@ -56,7 +60,7 @@ angular.module('directive.navbar', [])
                 }
             ],
             link: function(scope, element, attrs) {
-                // incase we need the linking funciton
+                // in case we need the linking function for future functionality
             },
             templateUrl: '../common/directives/navbar/index.tpl.html',
             replace: true

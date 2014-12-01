@@ -1,9 +1,15 @@
+/*
+* Our Authticate service manages client-side user authentication
+*/
 angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
 
 .factory('Authenticate', ['$q', 'lodash', 'utils', '$sails', 'config', "$rootScope",
     function($q, lodash, utils, $sails, config, $rootScope) {
-
-
+    	/*
+    	* Our user object manages the authenticated user and roles
+    	* @param {boolean} root
+    	* @param {function} callback funtion
+    	*/
         var User = function(root, init) {
             this.url = utils.prepareUrl('auth');
             this.setScope = function(user) {
@@ -16,7 +22,7 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
                 }
 
             };
-
+            // if this is the root instance (meaning only on instance, we instantiate )
             if (root) {
                 var self = this;
                 this.init().then(function(user) {
@@ -29,7 +35,10 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
                 this.register(this.manageAuth.bind(this));
             }
         };
-
+        /*
+        * Getter function for user and autheticated variables
+        * @param {string} key for accessing the variables. If empty, object return
+        */
         User.prototype.get = function(key) {
             var variables = {
                 authenticated: $rootScope.authenticated,
@@ -37,46 +46,62 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
                 init: $rootScope.authInit
             }
 
-            if (!key)
+            if (!key) // if we don't have a key return them all
                 return variables;
 
             return variables[key];
 
         };
-
+        /*
+        * We user manauge auth for the registration function. It sets the user
+        * once we recieve the update from the socket. 
+        * @param {Object} socket message.
+        */
         User.prototype.manageAuth = function(message) {
-
+        	// if we have a user and there is no error, we set the scope 
             if (message.verb == 'login' && !message.error && message.user)
-                this.setScope(message.user);
+                this.setScope(message.user); // we set the user
             else if (message.verb == 'logout')
-                this.setScope({});
+                this.setScope({}); // we set no user
         };
-
+        /*
+        * Register assigns a callback to the auth socket
+        * @param {function} callback 
+        */
         User.prototype.register = function(callback) {
             $sails.on('auth', callback);
         };
-
+        /*
+        * This function the the actual logging in the user
+        * @param {object} params :: the form credentials of the user
+        */
         User.prototype.login = function(params) {
 
             var self = this,
                 deferred = $q.defer();
             $sails.post('/auth/local', params, function(res) {
-                return deferred.resolve(res);
+                return deferred.resolve(res); // resolve the response
             });
             return deferred.promise;
         };
 
+        /*
+        * Logs the user out of the system
+        */
         User.prototype.logout = function() {
             var self = this,
                 deferred = $q.defer();
             $sails.get(this.url + '/logout', function(res) {
-                //self.current.set({});
-                return deferred.resolve(res);
+                return deferred.resolve(res); // respove the response
             });
 
             return deferred.promise;
         };
 
+        /*
+        * When the site first loads or on refresh, we check the web server to
+        * see if the user is logged in. 
+        */
         User.prototype.init = function() {
 
             var self = this,
@@ -84,8 +109,8 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
 
             $sails.on('connect', function() {
                 $sails.get(self.url + '/user', function(user) {
-                    $rootScope.authInit = true;
-                    return deferred.resolve(user);
+                    $rootScope.authInit = true; // we set authinti to trigger
+                    return deferred.resolve(user); // those areas of the app waiting on authentication
                 });
             });
 
@@ -93,14 +118,8 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
 
         };
 
-        var on = function(callback) {
-            $sails.on('auth', callback);
-        };
-
-
         return {
-            User: User,
-            on: on
+            User: User
         }
 
     }
