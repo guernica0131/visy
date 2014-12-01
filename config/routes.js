@@ -20,6 +20,8 @@
  * http://sailsjs.org/#/documentation/concepts/Routes/RouteTargetSyntax.html
  */
 
+
+
 module.exports.routes = {
 
   /***************************************************************************
@@ -32,9 +34,33 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
+  /**
+    * We set the default language for all routes
+    * **/
+  '/*': function(req, res, next) {
+      // res.setLocale(req.param('lang') || sails.config.i18n.defaultLocale);
+      //sails.log("{ROUTES} Setting locale");
+      res.setLocale(sails.config.i18n.defaultLocale);
+      return next();
+    },
+
   '/': {
-    view: 'homepage'
-  }
+    view: 'index'
+  },
+
+
+
+  'GET /login': 'AuthController.li',
+  'GET /logout': 'AuthController.lo',
+  'GET /register': 'AuthController.register',
+
+  //'GET /' + sails.config.blueprints.prefix + '/auth/user': 'AuthController.user',
+
+  'post /auth/local': 'AuthController.callback',
+  'post /auth/local/:action': 'AuthController.callback',
+
+  'get /auth/:provider': 'AuthController.provider',
+  'get /auth/:provider/callback': 'AuthController.callback',
 
   /***************************************************************************
   *                                                                          *

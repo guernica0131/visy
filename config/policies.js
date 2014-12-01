@@ -28,6 +28,13 @@ module.exports.policies = {
 
   // '*': true,
 
+  '*': true,
+
+  // we are saying this size is localized be default.  Comment out otherwise.
+  '*':  'localize',
+
+  '*': [ 'passport' ]
+
   /***************************************************************************
   *                                                                          *
   * Here's an example of mapping some policies to run before a controller    *

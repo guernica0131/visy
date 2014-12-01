@@ -1,0 +1,38 @@
+<nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="/">{{brand}}</a></h1>
+    </li>
+    <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <!-- <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li> -->
+  </ul>
+  <section class="top-bar-section">
+    <ul class="right" ng-show="authInit">
+      <li class="has-form" ng-hide="authenticated">
+        <div class="row collapse">
+          <div class="large-7 small-5 columns" >
+            <input type="text" placeholder="Username or Email" ng-model="identifier" ng-hide="authenticated">
+            <small class="error" ng-show="identError">Invalid entry</small>
+          </div>
+          <div class="large-5 small-5 columns">
+            <input type="password" placeholder="Password" ng-model="password" ng-hide="authenticated" ng-keyup="authenticate($event)">
+            <small class="error" ng-show="passError">Invalid password</small>
+          </div>
+          
+        </div>
+        <div class="row">
+          <div class="large-12 small-12" ng-show="badCredentials">
+            <small class="error">Invalid username or password combination</small>
+          </div>
+        </div>
+      </li>
+      <li class="divider"></li>
+      <li class="has-form show-for-large-up">  <a ng-click="authenticate($event)" class="button " >{{authenticated ? 'Logout': 'Login'}}</a> </li>
+    </ul>
+    <ul class="left" ng-show="authenticated">
+      <li><a>Welcome {{user.first_name}}</a></li>
+    </ul>
+    
+  </section>
+ 
+</nav>

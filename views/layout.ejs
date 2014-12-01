@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en" ng-app="vissy" ng-controller="AppCtrl">
+<html class="no-js" lang="en" ng-app="visy" ng-controller="AppCtrl">
   <head>
     <title>New Sails App</title>
     <meta charset="utf-8" />
@@ -34,9 +34,15 @@
     <!--STYLES END-->
 
     <script src="/bower_components/modernizr/modernizr.js"></script>
+
+  
   </head>
 
+
   <body>
+
+    <nav-bar></nav-bar>
+
     <%- body %>
 
 
@@ -106,8 +112,13 @@
     <script src="/src/app/viewA/index.js"></script>
     <script src="/src/app/viewB/index.js"></script>
     <script src="/src/common/directives/index.js"></script>
+    <script src="/src/common/directives/navbar/index.js"></script>
     <script src="/src/common/models/index.js"></script>
+    <script src="/src/common/services/Authenticate.js"></script>
+    <script src="/src/common/services/config.js"></script>
     <script src="/src/common/services/index.js"></script>
+    <script src="/src/common/services/lodash.js"></script>
+    <script src="/src/common/services/utils.js"></script>
     <!--SCRIPTS END-->
 
 

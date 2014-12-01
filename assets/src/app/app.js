@@ -1,22 +1,25 @@
 (function() {
 
-	'use strict';
+    'use strict';
 
-    angular.module('vissy', [
+    angular.module('visy', [
         'ui.router',
         'ngSails',
+        'models',
         'angularMoment',
         'angularMoment',
         'mm.foundation',
         'templates-app',
         'services',
-        'models',
         'directives',
         'vissy.viewA',
         'vissy.viewB'
         //'rxDataTable',
         //'ngTable',
     ])
+
+
+
 
     // .config(['$stateProvider', '$urlRouterProvider', '$locationProvider',
     //     function myAppConfig($stateProvider, $urlRouterProvider, $locationProvider) {
@@ -41,9 +44,15 @@
     //     moment.lang('en');
     // })
 
-    .controller('AppCtrl', ['$scope',
-        function AppCtrl($scope) {
+    .controller('AppCtrl', ['$scope', "Authenticate",
+        function AppCtrl($scope, Authenticate) {
             console.log("Angular app ready");
+            // we set the authenticated user
+            new Authenticate.User(true, function(user) {
+                console.log("User auth boostrap");
+            });
+          
+
         }
     ]);
 

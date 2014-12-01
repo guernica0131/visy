@@ -1,3 +1,4 @@
 angular.module('directives', [
-	// add models here
+	// add moduels here
+	'directive.navbar'
 ]);
