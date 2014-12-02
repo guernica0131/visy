@@ -1,64 +1,72 @@
 /**
-* Portal.js
-*
-* @description :: TODO: You might write a short summary of how this model works and what it represents here.
-* @docs        :: http://sailsjs.org/#!documentation/models
-*/
+ * Portal.js
+ *
+ * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @docs        :: http://sailsjs.org/#!documentation/models
+ */
 
 module.exports = {
 
-  attributes: {
+    is: {
+        permissible: {
+            children: ['collection']
+        },
+        space: {
+            parent: 'domain'
+        }
+    },
+
+    attributes: {
 
 
-  	name: {
-  		type: 'string'
-  	},
+        name: {
+            type: 'string'
+        },
 
-  	owner: {
-  		model: 'user'
-  	},
+        owner: {
+            model: 'user'
+        },
 
-  	key: {
-		type: 'string',
-		unique: true
-	},
+        key: {
+            type: 'string',
+            unique: true
+        },
 
-	path: {
-		type: 'urlish'
-	},
+        path: {
+            type: 'urlish'
+        },
 
-	meta: {
-  		type: 'json'
-  	},
+        meta: {
+            type: 'json'
+        },
 
-  	public: {
-		type: 'boolean',
-		defaultsTo: false
-	},
+        public: {
+            type: 'boolean',
+            defaultsTo: false
+        },
 
-  	domains: {
-  		collection: 'domain',
-  		via: 'portals'
-  	},
+        domains: {
+            collection: 'domain',
+            via: 'portals'
+        },
 
-  	collections: {
-  		collection: 'collection',
-  		via: 'portals',
-  		dominant: true
-  	},
+        collections: {
+            collection: 'collection',
+            via: 'portals',
+            dominant: true
+        },
 
-  	categories: {
-		collection: 'category',
-		via: 'portals',
-		dominant: true
-	},
+        categories: {
+            collection: 'category',
+            via: 'portals',
+            dominant: true
+        },
 
-	tags: {
-		collection: 'tag',
-		via: 'portals',
-		dominant: true
-	}
+        tags: {
+            collection: 'tag',
+            via: 'portals',
+            dominant: true
+        }
 
-  }
+    }
 };
-

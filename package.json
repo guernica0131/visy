@@ -38,7 +38,9 @@
     "passport-twitter": "^1.0.2",
     "validator": "~3.22.1",
     "grunt-contrib-compass ": "~1.0.1",
-    "node-uuid": "~1.4.1"
+    "node-uuid": "~1.4.1",
+    "lodash": "~2.4.1",
+    "q": "1.1.2"
   },
   "scripts": {
     "start": "node app.js",

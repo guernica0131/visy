@@ -7,6 +7,10 @@
 
 module.exports = {
 
+  is: {
+        permissible: true
+    },
+
   attributes: {
 
   	name: {
@@ -36,6 +40,10 @@ module.exports = {
   		collection: 'collection',
   		via: 'tags'
   	},
+
+    owner: {
+      model: 'user'
+    }
 
   }
 };

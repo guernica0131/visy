@@ -22,59 +22,69 @@ var validator = require('validator');
  * @param {Object}   res
  * @param {Function} next
  */
-exports.register = function (req, res, next) {
-  var email    = req.param('email')
-    , username = req.param('username')
-    , password = req.param('password')
-    , first_name = req.param('first_name')
+exports.register = function(req, res, next) {
+    var email = req.param('email'),
+        username = req.param('username'),
+        password = req.param('password'),
+        first_name = req.param('first_name')
 
     , role = req.param('role');
 
 
-  if (!email) {
-    req.flash('error', 'Error.Passport.Email.Missing');
-    return next(new Error('No email was entered.'));
-  }
+    if (!email) {
+        req.flash('error', 'Error.Passport.Email.Missing');
+        return next(new Error('No email was entered.'));
+    }
 
-  if (!username) {
-    req.flash('error', 'Error.Passport.Username.Missing');
-    return next(new Error('No username was entered.'));
-  }
+    if (!username) {
+        req.flash('error', 'Error.Passport.Username.Missing');
+        return next(new Error('No username was entered.'));
+    }
 
-  if (!password) {
-    req.flash('error', 'Error.Passport.Password.Missing');
-    return next(new Error('No password was entered.'));
-  }
+    if (!password) {
+        req.flash('error', 'Error.Passport.Password.Missing');
+        return next(new Error('No password was entered.'));
+    }
 
-  if (!first_name) {
-    req.flash('error', 'Error.Passport.Email.Missing');
-    return next(new Error('No first name was entered.'));
-  }
+    if (!first_name) {
+        req.flash('error', 'Error.Passport.Email.Missing');
+        return next(new Error('No first name was entered.'));
+    }
     if (!role) {
         req.flash('error', 'Error.Passport.role.Missing');
         return next(new Error('No role was entered.'));
     }
-  User.create({
-    username : username,
-    email    : email,
-  	first_name: first_name,
-    role:role
-  }).exec(function (err, user) {
-    if (err) {
-      req.flash('error', 'Error.Passport.User.Exists');
-      return next(err);
-    }
 
-    Passport.create({
-      protocol : 'local'
-    , password : password
-    , user     : user.id
-    , role: user.role
-    }).exec(function (err, passport) {
-      next(err, user);
+    /*
+     * @TODO Needs full testing
+     */
+
+    Role.findByKey('authenticated_user', function(err, role) {
+
+        User.create({
+            username: username,
+            email: email,
+            first_name: first_name,
+            siterole: role.id
+        }).exec(function(err, user) {
+            if (err) {
+                req.flash('error', 'Error.Passport.User.Exists');
+                return next(err);
+            }
+
+            Passport.create({
+                protocol: 'local',
+                password: password,
+                user: user.id
+            }).exec(function(err, passport) {
+                next(err, user);
+            });
+        });
+
+
     });
-  });
-};
+
+}
 
 /**
  * Assign local Passport to user
@@ -87,30 +97,29 @@ exports.register = function (req, res, next) {
  * @param {Object}   res
  * @param {Function} next
  */
-exports.connect = function (req, res, next) {
-  var user     = req.user
-    , password = req.param('password');
+exports.connect = function(req, res, next) {
+    var user = req.user,
+        password = req.param('password');
 
-  Passport.findOne({
-    protocol : 'local'
-  , user     : user.id
-  }).exec(function (err, passport) {
-    if (err) return next(err);
+    Passport.findOne({
+        protocol: 'local',
+        user: user.id
+    }).exec(function(err, passport) {
+        if (err) return next(err);
 
-    if (!passport) {
-      Passport.create({
-        protocol : 'local'
-      , password : password
-      , user     : user.id
-      , role : user.role
-      }).exec(function (err, passport) {
-        next(err, user);
-      });
-    }
-    else {
-      next(null, user);
-    }
-  });
+        if (!passport) {
+            Passport.create({
+                protocol: 'local',
+                password: password,
+                user: user.id,
+                role: user.role
+            }).exec(function(err, passport) {
+                next(err, user);
+            });
+        } else {
+            next(null, user);
+        }
+    });
 };
 
 /**
@@ -125,56 +134,54 @@ exports.connect = function (req, res, next) {
  * @param {string}   password
  * @param {Function} next
  */
-exports.login = function (req, identifier, password, next) {
+exports.login = function(req, identifier, password, next) {
 
-  var isEmail = validator.isEmail(identifier)
-    , query   = {};
+    var isEmail = validator.isEmail(identifier),
+        query = {};
 
-  if (isEmail) {
-    query.email = identifier;
-  }
-  else {
-    query.username = identifier;
-  }
-
-
-
-  User.findOne(query).populate('siterole').exec(function (err, user) {
-
-    if (err) return next(err);
-
-    if (!user) {
-      if (isEmail) {
-        req.flash('error', 'Error.Passport.Email.NotFound');
-      } else {
-        req.flash('error', 'Error.Passport.Username.NotFound');
-      }
-
-      return next(null, false);
+    if (isEmail) {
+        query.email = identifier;
+    } else {
+        query.username = identifier;
     }
 
-    Passport.findOne().where({
-      protocol : 'local'
-    , user     : user.id
-    }).exec(function (err, passport) {
 
-      if (passport) {
-        passport.validatePassword(password, function (err, res) {
-          
-          if (err) return next(err);
 
-          if (!res) {
-            req.flash('error', 'Error.Passport.Password.Wrong');
+    User.findOne(query).populate('siterole').exec(function(err, user) {
+        
+        if (err) return next(err);
+
+        if (!user) {
+            if (isEmail) {
+                req.flash('error', 'Error.Passport.Email.NotFound');
+            } else {
+                req.flash('error', 'Error.Passport.Username.NotFound');
+            }
+
             return next(null, false);
-          } else {
-            return next(null, user);
-          }
+        }
+
+        Passport.findOne().where({
+            protocol: 'local',
+            user: user.id
+        }).exec(function(err, passport) {
+
+            if (passport) {
+                passport.validatePassword(password, function(err, res) {
+
+                    if (err) return next(err);
+
+                    if (!res) {
+                        req.flash('error', 'Error.Passport.Password.Wrong');
+                        return next(null, false);
+                    } else {
+                        return next(null, user);
+                    }
+                });
+            } else {
+                req.flash('error', 'Error.Passport.Password.NotSet');
+                return next(null, false);
+            }
         });
-      }
-      else {
-        req.flash('error', 'Error.Passport.Password.NotSet');
-        return next(null, false);
-      }
     });
-  });
 };

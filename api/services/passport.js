@@ -298,7 +298,7 @@ passport.serializeUser(function (user, next) {
 });
 
 passport.deserializeUser(function (id, next) {
-  User.findOne(id).exec(next);
+  User.findOne(id).populate('siterole').exec(next);
 });
 
 module.exports = passport;

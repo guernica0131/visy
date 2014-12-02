@@ -7,6 +7,10 @@
 
 module.exports = {
 
+    is: {
+        permissible: true
+    },
+
     attributes: {
 
         name: {
@@ -94,7 +98,7 @@ module.exports = {
                 {
                     name: 'System Administrator',
                     description: "This role creates a system-level adminstrative role",
-                    key: 'sysadmin',
+                    key: 'system_admin',
                     precedence: 0,
                     perishable: false
                 },
@@ -110,16 +114,40 @@ module.exports = {
                 {
                     name: 'Object Administrator',
                     description: "This role creates an object-level adminstrative role",
-                    key: 'objadmin',
+                    key: 'object_admin',
                     precedence: 10,
+                    perishable: false
+                },
+
+                {
+                    name: 'Member User',
+                    description: "This role is defined as a member of a space but generally has no adminstrative rights",
+                    key: 'member',
+                    precedence: 15,
+                    perishable: false
+                },
+
+                {
+                    name: 'Visiting User',
+                    description: "This role is defined as a user who enters a public space but is not an actual member.",
+                    key: 'visiting_user',
+                    precedence: 20,
                     perishable: false
                 },
 
                 {
                     name: 'Authenticated User',
                     description: "This role creates a basic user role and is the default for the system",
-                    key: 'authuser',
-                    precedence: 15,
+                    key: 'authenticated_user',
+                    precedence: 25,
+                    perishable: false
+                },
+
+                {
+                    name: 'Anonymous User',
+                    description: "This role creates a user that has not been defined yet",
+                    key: 'anonymous_user',
+                    precedence: 30,
                     perishable: false
                 }
 

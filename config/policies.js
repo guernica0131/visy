@@ -33,7 +33,7 @@ module.exports.policies = {
   // we are saying this size is localized be default.  Comment out otherwise.
   '*':  'localize',
 
-  '*': [ 'passport' ]
+  '*': [ 'passport' , 'permitted']
 
   /***************************************************************************
   *                                                                          *

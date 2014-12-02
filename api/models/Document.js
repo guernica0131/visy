@@ -1,35 +1,38 @@
 /**
-* Document.js
-*
-* @description :: TODO: You might write a short summary of how this model works and what it represents here.
-* @docs        :: http://sailsjs.org/#!documentation/models
-*/
+ * Document.js
+ *
+ * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @docs        :: http://sailsjs.org/#!documentation/models
+ */
 
 module.exports = {
 
-  attributes: {
+    is: {
+        permissible: true
+    },
 
-  	name: {
-  		type: 'string'
-  	},
+    attributes: {
 
-  	owner: {
-  		model: 'user'
-  	},
+        name: {
+            type: 'string'
+        },
 
-  	attributes: {
-  		type: 'json'
-  	},
+        owner: {
+            model: 'user'
+        },
 
-  	meta: {
-  		type: 'json'
-  	},
+        attributes: {
+            type: 'json'
+        },
 
-  	collections: {
-  		collection: 'collection',
-  		via: 'documents'
-  	}
+        meta: {
+            type: 'json'
+        },
 
-  }
+        collections: {
+            collection: 'collection',
+            via: 'documents'
+        }
+
+    }
 };
-

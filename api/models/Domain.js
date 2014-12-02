@@ -7,6 +7,14 @@
 
 module.exports = {
 
+  is: {
+        permissible: true,
+        space: {
+        	parent: 'root',
+        	child: 'portal'
+        }
+   },
+
   attributes: {
 
   	name: {
@@ -23,7 +31,8 @@ module.exports = {
   	},
 
 	path: {
-		type: 'urlish'
+		type: 'string',
+		unique: true
 	},
 
 	meta: {
@@ -59,6 +68,24 @@ module.exports = {
 		dominant: true
 	}
 
+  },
+
+  seeds: function(cb) {
+  	var plant = function(cb) {
+  		Domain.create([{
+  			name: 'guernica Softworks',
+  			key: 'gSoft',
+  			owner: 1,
+  			path: 'guernicasoftworks.com',
+  			public: false
+  		}], cb);
+  	}
+  	return {
+  		seed: true,
+  		plant: plant
+  	} 
+  	
   }
+
 };
 

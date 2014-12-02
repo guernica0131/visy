@@ -77,6 +77,10 @@ module.exports.bootstrap = function(cb) {
                 });
             });
             cb();
+        },
+
+        function(cb) {
+            Permission.buildPermissions(cb);
         }
 
 

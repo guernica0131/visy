@@ -31,6 +31,11 @@ module.exports = {
 		});
 	},
 
+
+	can: function(req, res) {
+		
+	},
+
 /*
 model for roles
 switch (project.role) {

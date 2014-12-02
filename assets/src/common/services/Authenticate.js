@@ -38,6 +38,7 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
         /*
         * Getter function for user and autheticated variables
         * @param {string} key for accessing the variables. If empty, object return
+        * @return {string}, {Object}
         */
         User.prototype.get = function(key) {
             var variables = {
@@ -66,14 +67,14 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
         };
         /*
         * Register assigns a callback to the auth socket
-        * @param {function} callback 
+        * @param {User~requestCallback} callback 
         */
         User.prototype.register = function(callback) {
             $sails.on('auth', callback);
         };
         /*
         * This function the the actual logging in the user
-        * @param {object} params :: the form credentials of the user
+        * @param {object} params - the form credentials of the user
         */
         User.prototype.login = function(params) {
 
