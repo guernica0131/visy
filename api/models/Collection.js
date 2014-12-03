@@ -11,6 +11,9 @@ module.exports = {
         permissible: {
             children: ['document']
         }
+        // space: {
+        //     parent: 'portal'
+        // } // feature Collections is not a space... yet
     },
 
     attributes: {
@@ -54,6 +57,28 @@ module.exports = {
             collection: 'tag',
             via: 'collections',
             dominant: true
+        }
+
+    },
+
+    seeds: function(cb) {
+
+        var associate = function(cb) {
+            Collection.create([{
+                name: 'I am a collection of features',
+                key: 'gsoft-features',
+                owner: 1,
+                portals: [1]
+            }], cb);
+        };
+
+        var plant = function(cb) {
+            return cb(null, "pass");
+        }
+        return {
+            seed: true,
+            plant: plant,
+            associate: associate
         }
 
     }

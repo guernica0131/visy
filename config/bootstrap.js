@@ -29,12 +29,11 @@ module.exports.bootstrap = function(cb) {
                 Object.keys(sails.models).forEach(function(key) {
                     var model = sails.models[key];
                     // if we have a seed function, we ensure it is defined and we can run it
-                    if (model.seeds && _.isFunction(model.seeds)) {
+                    if (model.seeds && model.seeds().seed) {
                         seed = model.seeds();
                         // if the seed parameter is truthy, we plant the seed.
-                        if (seed.seed) {
+                        if (seed.plant && _.isFunction(seed.plant))
                             seed.plant(callback);
-                        }
 
                         if (seed.associate && _.isFunction(seed.associate))
                             associations.push(seed.associate);

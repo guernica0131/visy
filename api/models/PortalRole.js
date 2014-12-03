@@ -22,6 +22,27 @@ module.exports = {
   		model: 'role'
   	}
 
+  },
+
+   seeds: function(cb) {
+
+    var associate = function(cb) {
+       PortalRole.create({
+        member: 1,
+        domain: 1,
+        role: 3
+       }, cb);
+    };
+
+    var plant = function(cb) {
+       return cb(null, "pass");
+    };
+
+    return {
+        seed: false,
+        plant: plant,
+        associate: associate
+    } 
   }
 };
 

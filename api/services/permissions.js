@@ -39,9 +39,10 @@ module.exports = {
         // it to the root space
         if (!req.session.space)
             req.session.space = {
-                name: 'root'
+                name: 'root', // 'collection' testing
+                //id: 1 // testing
             };
-
+        
         var options = req.options,
             model = sails.models[options.model];
 

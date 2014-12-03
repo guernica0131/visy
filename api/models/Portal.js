@@ -33,7 +33,7 @@ module.exports = {
         },
 
         path: {
-            type: 'urlish'
+            type: 'string'
         },
 
         meta: {
@@ -66,6 +66,30 @@ module.exports = {
             collection: 'tag',
             via: 'portals',
             dominant: true
+        }
+
+    },
+
+    seeds: function(cb) {
+
+        var associate = function(cb) {
+            Portal.create([{
+                name: 'About',
+                key: 'gsoft-about',
+                owner: 1,
+                path: 'guernicasoftworks.com/about',
+                public: false,
+                domains: [1]
+            }], cb);
+        };
+
+        var plant = function(cb) {
+            return cb(null, "pass");
+        }
+        return {
+            seed: true,
+            plant: plant,
+            associate: associate
         }
 
     }

@@ -21,6 +21,27 @@ module.exports = {
   		model: 'role'
   	}
 
+  },
+
+   seeds: function(cb) {
+
+    var associate = function(cb) {
+       DomainRole.create({
+        member: 1,
+        domain: 1,
+        role: 2
+       }, cb);
+    };
+
+    var plant = function(cb) {
+       return cb(null, "pass");
+    };
+
+    return {
+        seed: false,
+        plant: plant,
+        associate: associate
+    } 
   }
 };
 
