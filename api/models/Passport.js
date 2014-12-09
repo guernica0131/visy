@@ -65,6 +65,14 @@ module.exports = {
      */
     validatePassword: function (password, next) {
       bcrypt.compare(password, this.password, next);
+    },
+
+    toJSON: function() {
+      var passport = this.toObject();
+      // we need to remove the password
+      delete passport.password;
+      return passport;
+
     }
 
   },

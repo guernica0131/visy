@@ -82,128 +82,235 @@ module.exports = {
 
     /*
      * We use can for determining is a user has permission within a certain role
+     * We first seek role within the current space. If that isn't found, we cascade
+     * up to the parent space (if found) and attempt to find the role there. This continues
+     * until either a role is found or we land at the root. In which case, we pull siterole
      * This function will need tons of testing once we have everything im place.
      * For now we will ignore spaces space = {name: 'domain', id: 1}
+     * @param {object} user - the user object in session
+     * @param {string|array} keys - a single permission or an array of permissions we want to validate
+     * @param {object} space - the name and id of the current session space
+     * @param {function} callback - this returns either true false depending on if the role is permitted
      */
-    can: function(user, key, space, callback) {
+    can: function(user, keys, space, callback) {
+
+        // we check if we are dealing with and array or a string
+        var obj = {};
+        var responses = {};
+
+        // because we want to skip all processing for user 1
+        // we assume the user can perform the task
+        if (_.isArray(keys)) { // if array
+            // this creats an object with all values set to true
+            _.times(keys.length, function(i) {
+                responses[keys[i]] = true;
+            });
+        } else { // if string
+            responses[keys] = true;
+        }
+
         // our god-mode user, can always do anything
         if (user && user.id === 1)
-            return callback(true);
+            return callback(responses);
+
+        var Can = function(user, space, key, more) {
+            //this.key = key;
+            this.user = user;
+            this.space = space;
+            this.more = more;
+            this.key = key;
+
+            var self = this;
+            this.setup = function() {
+                var sRole;
+
+                if (!self.user)
+                    return self._can('anonymous_user');
+                else {
+                    // here we set a space and ask, whats the role
+                    if (space && space.name != 'root') {
+                        //this._find(sails.models[space.name], this.space); /// LOGICAL ERROR
+                        // // if we can pull from this scope, we proceed
+                        if (sRole = sails.models[space.name + 'role']) //we create the inital case to avoid 
+                            self._pull(sRole, space);
+                        else // otherwise, we need to pull from up the hierarchy
+                            self._find(sails.models[space.name], space);
+                    } else {
+                        // if there is no has no object role, then we default to 
+                        // the site role.
+                        self._can(this.user.siterole.key);
+                    }
+
+                }
+
+            };
+
+
+            this.setup();
+
+        };
+
+        Can.prototype.setResponse = function(can) {
+            //console.log("My responses " + this.key);
+            responses[this.key] = can;
+            // else
+            // responses = can;
+            if (!this.more) // at 0 we bail
+                callback(responses);
+
+        };
         /*
          * The trick is in fiding the appropriate role
          * based on the current space
+         * @param {string} current_key - the string of the role key
+         * @return {callback} - if the role can or cannot perform the task
          */
-        var _can = (function(current_key) {
-                console.log("In _CAN!!!!!!!", current_key);
-                // if no current_key, we return
-                if (!current_key)
-                    return callback(false);
-                //console.log("In little key", current_key);
-                Role.findOneByKey(current_key).populate('permissions').exec(function(err, role) {
-                    // if we have an error, we reject the request
-                    if (err) return callback(false);
-                    // we see what keys the role has
-                    var permits = _.pluck(role.permissions, 'key');
-                    // if it contains the key
-                    if (_.contains(permits, key))
-                        return callback(true); // we proceed
-                    // otherwise, we default to false
-                    callback(false);
-                });
+        Can.prototype._can = function(current_key) {
+            sails.log("User._CAN?", current_key);
+            // if no current_key, we return
+            if (!current_key)
+                return this.setResponse(false);
+
+            var self = this;
+            //console.log("In little key", current_key);
+            Role.findOneByKey(current_key).populate('permissions').exec(function(err, role) {
+                // if we have an error, we reject the request
+                if (err) return self.setResponse(false);
+                // we see what keys the role has
+                var permits = _.pluck(role.permissions, 'key');
+                // if it contains the key
+                if (_.contains(permits, self.key))
+                    return self.setResponse(true); // we proceed
+                // otherwise, we default to false
+                return self.setResponse(false);
+            });
+        };
+
+        /*
+         * We use pull to search for a model and role of the user under a ModelRole model
+         */
+        Can.prototype._pull = function(Model, space) {
+            if (!Model) // if we don't have a model, we automatically return the default role
+                return this._can(this.user.siterole.key);
+
+            var self = this;
+
+            Model.findOne({
+                id: space.id,
+                member: this.user.id
+            }).populate('role').exec(function(err, r) {
+                if (err) // if we have an error, we just return with the default
+                    return self._can(self.user.siterole.key);
+                // since we have a user but the user has no role, we define his 
+                // role as a visiting_user
+                if (!r || !r.role || !r.role.key) // if there is not site role. 
+                    return self._find(sails.models[space.name], space); // we attempt to find the parent role
+                // otherwise, we pull his role
+                return self._can(r.role.key, more);
             });
 
+        };
+
         /*
-        * We use pull to search for a model and role of the user under a ModelRole model
-        */
-        var _pull = (function(Model, space, user) {
+         * We use find to find the parent model and it's accociated ID
+         */
+        Can.prototype._find = function(Model, space) {
 
 
-
-            if (!Model) // if we don't have a model, we authomatically return the default role
-                return _can(user.siterole.key);
-
-                 Model.findOne({
-                    id: space.id,
-                    member: user.id
-                }).populate('role').exec(function(err, r) {
-                    if (err) // if we have an error, we just return with the default
-                        return _can(user.siterole.key);
-                    // since we have a user but the user has no role, we define his 
-                    // role as a visiting_user
-                    if (!r || !r.role || !r.role.key) // if there is not site role. 
-                        return _find(sails.models[space.name], space, user); // we attempt to find the parent role
-                    // otherwise, we pull his role
-                    return _can(r.role.key);
-                });
-
-        });
-        
-        /*
-        * We use find to find the parent model and it's accociated ID
-        */
-        var _find = (function(Model, space, user) {
             // if there is a parent space, we try to find it
-             if (Model && Model.is && Model.is.space && Model.is.space.parent) { 
+            if (Model && Model.is && Model.is.space && Model.is.space.parent) {
 
                 if (Model.is.space.parent === 'root') // if the parent is the root
-                     return _pull(null, null, user); // we simply pull the users role
+                    return this._pull(null, null); // we simply pull the users role
 
                 // we need to get the name of the alias we created for the association
                 var associations = Model.associations,
-                    attributes = _.where(associations, {collection: Model.is.space.parent});
+                    attributes = _.where(associations, {
+                        collection: Model.is.space.parent
+                    });
 
                 if (!attributes || _.isEmpty(attributes))
-                    return _pull(null, null, user); // we simply pull the users role
+                    return this._pull(null, null); // we simply pull the users role
 
-                Model.findOne({  
+                var self = this;
+
+                Model.findOne({
                     id: space.id
                     ///member: user.id
                 }).populate(attributes[0].alias).exec(function(err, model) {
 
-                    if (err || !model) return _can(user.siterole.key);                    
-                    
+                    if (err || !model) return self._can(self.user.siterole.key);
+
                     // now if we have a parent role model
                     var parent;
                     if (parent = sails.models[Model.is.space.parent + 'role']) {
-                        _pull(parent, {name: Model.is.space.parent , id: model.id}, user); // we pull from the parent role
-                    }
-                         
-                    else { // then we send portal back through in an attempt to find the parent role
+                        self._pull(parent, {
+                            name: Model.is.space.parent,
+                            id: model.id
+                        }); // we pull from the parent role
+                    } else { // then we send portal back through in an attempt to find the parent role
                         var Mod = sails.models[Model.is.space.parent];
-                        _find(Mod, {name: Model.is.space.parent , id: model.id}, user);
-                    } 
-                   
+                        self._find(Mod, {
+                            name: Model.is.space.parent,
+                            id: model.id
+                        });
+                    }
+
                 });
 
             } else // otherwise, we default to the users site role
-                _pull(null, null, user);
+                this._pull(null, null);
 
-        }); 
-            // space that will be search if it isn't root.
-        var sRole;
+        };
 
-        if (!user)
-            return _can('anonymous_user');
-        else {
-            // here we set a space and ask, whats the role
-            if (space && space.name != 'root') {
-                // if we can pull from this scope, we proceed
-                if (sRole = sails.models[space.name + 'role'])
-                    _pull(sRole, space, user);
-                else  // otherwise, we need to pull from up the hierarchy
-                   _find(sails.models[space.name], space, user);
-            } else {
-                // if there is no has no object role, then we default to 
-                // the site role.
-                _can(user.siterole.key);
+        Can.prototype.setup = function(key, more) {
+
+            this.key = key;
+            this.more = more;
+
+            var sRole;
+
+            if (!this.user)
+                return this._can('anonymous_user');
+            else {
+                // here we set a space and ask, whats the role
+                if (space && space.name != 'root') {
+                    // if we can pull from this scope, we proceed
+                    if (sRole = sails.models[space.name + 'role']) //we create the inital case to avoid 
+                        this._pull(sRole, space);
+                    else // otherwise, we need to pull from up the hierarchy
+                        this._find(sails.models[space.name], space);
+                } else {
+                    // if there is no has no object role, then we default to 
+                    // the site role.
+                    this._can(this.user.siterole.key);
+                }
+
             }
 
+        };
+
+
+        var more = 0;
+        // if we have an array, we process each one
+        if (_.isArray(keys)) {
+            // we make sure we are not processing the same values
+            var keys = _.unique(keys);
+            // now we iterate
+            keys.forEach(function(key, i) {
+                // more decrements as the keys increment
+                more = ((keys.length - 1) - i);
+                new Can(user, space, key, more);
+            });
+        } else { // for a string
+            new Can(user, space, keys, more);
         }
+
+
     },
 
     login: function(req, res, next) {
         passport.callback(req, res, function(err, user) {
-            //  sails.log('in callback 2 ', user);
             req.login(user, function(err) {
                 if (err) return next(err);
                 user.online = true;
@@ -280,22 +387,46 @@ module.exports = {
 
             Role.findOneByKey('system_admin').exec(function(err, role) {
 
-                console.log("My Role", role);
+                //console.log("My Role", role);
 
                 User.create([{
-                    username: 'guernica0131',
-                    email: 'design@guernicasoftworks.com',
-                    first_name: 'gSoft',
-                    last_name: 'admin',
-                    siterole: role.id,
-                    passports: {
-                        protocol: 'local',
-                        password: sails.config.adminpass
+                        username: 'guernica0131',
+                        email: 'design@guernicasoftworks.com',
+                        first_name: 'gSoft',
+                        last_name: 'admin',
+                        siterole: role.id,
+                        passports: {
+                            protocol: 'local',
+                            password: sails.config.adminpass
+                        }
                     }
-                }, ], cb);
+
+
+
+                ], cb);
 
 
             });
+
+            Role.findOneByKey('authenticated_user').exec(function(err, role) {
+
+
+                User.create([{
+                        username: 'user',
+                        email: 'guernica0131@yahoo.com',
+                        first_name: 'Test',
+                        last_name: 'User',
+                        siterole: role.id,
+                        passports: {
+                            protocol: 'local',
+                            password: sails.config.userpass
+                        }
+                    }
+
+                ], cb);
+
+            });
+
             // User.create([
             // ], cb);
 

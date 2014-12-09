@@ -40,7 +40,9 @@
     "grunt-contrib-compass ": "~1.0.1",
     "node-uuid": "~1.4.1",
     "lodash": "~2.4.1",
-    "q": "1.1.2"
+    "q": "1.1.2",
+    "sails-redis": "~0.10.x",
+    "connect-redis": "~1.4.5"
   },
   "scripts": {
     "start": "node app.js",

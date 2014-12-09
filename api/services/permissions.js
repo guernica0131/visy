@@ -54,8 +54,9 @@ module.exports = {
             key = this.build(options);
         // once we have our key bult we ask if the user can? perform the key  
         User.can(user, key, req.session.space, function(can) {
+            sails.log("Can I ?????", can);
         
-            if (!can) // the we don't hav that permission for the space role we return and reject
+            if (!can[key]) // the we don't hav that permission for the space role we return and reject
                 return res.forbidden("Your role lacks the required permissions for this action");
             // now we descide what we need to do with that he/she can can't do
             next();

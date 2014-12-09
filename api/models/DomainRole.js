@@ -38,7 +38,7 @@ module.exports = {
     };
 
     return {
-        seed: false,
+        seed: true,
         plant: plant,
         associate: associate
     } 
