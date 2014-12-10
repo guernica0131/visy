@@ -9,10 +9,14 @@
 
 module.exports = {
 
-	// create: function(req, res, next) {
-	// 	sails.log.verbose("Hello world!!!");
- //    	return blueprintCreate(req, res);
+
+
+	// find: function(req, res, next) {
+	// 	console.log("THIS IS WORKING");
+	// 	//return res.send("Fuck");
+	// 	next();
 	// }
+	
 	
 	
 };

@@ -50,6 +50,13 @@
             // we set the authenticated user
             new Authenticate.User(true, function(user) {
                 console.log("User auth boostrap");
+                // for permission testing
+                 var user = new Authenticate.User();
+                 user.can('can_test_auth').then(function(res) {
+                    console.log("What'd he say", res);
+                 }, function(reason) {
+                    console.log("Rejected",reason);
+                 });
             });
           
 

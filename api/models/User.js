@@ -62,10 +62,9 @@ module.exports = {
         },
 
         //@TODO::: check to see if this user has permission 
-        can: function(activities, callback) {
-            console.log("Littel can");
+        can: function(keys, space, callback) {
             var user = this.toObject();
-            User.can(user, activities, callback);
+            User.can(user, keys, space, callback);
         }
 
     },
@@ -144,8 +143,7 @@ module.exports = {
                 }
 
             };
-
-
+            // now we run our method
             this.setup();
 
         };
