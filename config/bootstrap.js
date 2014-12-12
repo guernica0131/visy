@@ -80,7 +80,25 @@ module.exports.bootstrap = function(cb) {
 
         function(cb) {
             Permission.buildPermissions(cb);
-        }
+        },
+
+        // function(cb) {
+        //     //console.log(sails.config.routes);
+        //     var getPrefix = function() {
+        //         return sails.config.blueprints.prefix;
+        //     };
+
+
+        //     var setRouteKey = function(routes, method, route, controller) {
+        //         routes[method + " " + getPrefix() + route] = controller;
+        //     };
+
+        //     //setRouteKey(sails.config.routes, 'get', '/:model/permissions' ,'PermissionController.permissions');
+
+        //     //console.log(sails.config.routes);
+
+        //     cb();
+        // }
 
 
     ], function() {

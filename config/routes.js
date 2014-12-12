@@ -22,7 +22,8 @@
 
 
 
-module.exports.routes = {
+ var routes = {
+
 
   /***************************************************************************
   *                                                                          *
@@ -62,6 +63,8 @@ module.exports.routes = {
   'get /auth/:provider': 'AuthController.provider',
   'get /auth/:provider/callback': 'AuthController.callback',
 
+
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
@@ -72,4 +75,16 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
+  'get /api/:model/permissions' : 'PermissionController.permissions',
+
+  'get /api/:model/define': 'SiteController.define',
 };
+
+
+
+
+ 
+
+
+
+module.exports.routes = routes;

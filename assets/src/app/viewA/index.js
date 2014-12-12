@@ -2,7 +2,7 @@ angular.module( 'vissy.viewA', [ ])
 
     .config( ['$stateProvider',function config( $stateProvider ) {
         $stateProvider.state( 'viewA', {
-		url: '/viewA',
+		//url: '#viewA',
 		views: {
 			"viewA": {
 				controller: 'ViewACtrl',
@@ -13,5 +13,5 @@ angular.module( 'vissy.viewA', [ ])
 }])
 
 .controller( 'ViewACtrl',['$scope', function AboutController( $scope ) {
-	
+	console.log("Hey, Im in view A");
 }]);

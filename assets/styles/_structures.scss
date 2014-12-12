@@ -1,0 +1,15 @@
+.page {
+    .inner-wrap, .off-canvas-wrap, .main-wrapper {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        /*background-color: red;*/
+    }
+    .overflow-y {
+        overflow-y: auto;
+    }
+    .main-padding {
+        padding-top: 50px;
+        padding-bottom: 100px;
+    }
+}

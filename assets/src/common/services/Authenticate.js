@@ -3,7 +3,7 @@
  */
 angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
 
-.factory('Authenticate', ['$q', 'lodash', 'utils', '$sails', 'config', "$rootScope",
+.service('Authenticate', ['$q', 'lodash', 'utils', '$sails', 'config', "$rootScope",
     function($q, lodash, utils, $sails, config, $rootScope) {
         /*
          * Our user object manages the authenticated user and roles
@@ -27,8 +27,11 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
                 var self = this;
                 this.init().then(function(user) {
                     // we can bootstap user auth
-                    if (init && lodash.isFunction(init))
+                    if (init && lodash.isFunction(init)) {
                         init(user);
+                        self.register(init);
+                    }
+                        
                 });
                 // we register the instance the the socket listener. That way we can 
                 // register any changes made throughout the application
@@ -140,11 +143,20 @@ angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
             var self = this,
                 deferred = $q.defer();
 
-            $sails.on('connect', function() {
-                $sails.get(self.url + '/user', function(user) {
+            var setUp = function() {
+                 $sails.get(self.url + '/user', function(user) {
                     $rootScope.authInit = true; // we set authinti to trigger
                     return deferred.resolve(user); // those areas of the app waiting on authentication
                 });
+            }
+
+            if ($sails.socket.connected) {
+                 setUp();
+                return deferred.promise;
+            }
+
+            $sails.on('connect', function() {
+               setUp();
             });
 
             return deferred.promise;

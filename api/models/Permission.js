@@ -90,16 +90,8 @@ module.exports = {
         }
     },
 
-    /*
-     * Here we build a series of permission that are
-     * user to generate permissible models
-     */
-    buildPermissions: function(cb) {
+    permissions: function(model, associations) {
 
-        /*
-         * Local function for defining the
-         */
-        var permissions = function(model, associations) {
 
             var modelVowel = _.contains(['a', 'e', 'i', 'o', 'u'], model.charAt(0));
             perms = [{
@@ -212,10 +204,18 @@ module.exports = {
 
 
             return perms;
-        };
 
+    },
+
+    /*
+     * Here we build a series of permission that are
+     * user to generate permissible models
+     */
+    buildPermissions: function(cb) {
+
+      
         var createPermission = function(key, associations) {
-            var perms = permissions(key, associations);
+            var perms = Permission.permissions(key, associations);
 
             perms.forEach(function(perm) {
                 Permission.findOrCreate({

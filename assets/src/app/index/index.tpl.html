@@ -1,0 +1,15 @@
+<div>
+    <h1>Role Test</h1>
+    
+   <!--  <div ui-view="viewA"></div> 
+
+    <a ui-sref="viewA">Edit</a> -->
+   	<section class="role-view" ng-if="findPermits['can_find_role']">
+   		<article ng-repeat="r in roles track by $index">
+   			<h3>{{r.name}}</h3>
+
+
+   		</article>
+   	</section>
+
+</div>

@@ -45,7 +45,6 @@ module.exports = {
         
         var options = req.options,
             model = sails.models[options.model];
-
         // if the model isn't permissible return next();
         if (!model || (model.is && !model.is.permissible))
             return next();

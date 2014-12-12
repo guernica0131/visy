@@ -39,9 +39,9 @@
   </head>
 
 
-  <body>
+  <body  class="hide-extras">
 
-    <nav-bar></nav-bar>
+    <!-- <nav-bar></nav-bar> -->
 
     <%- body %>
 
@@ -96,6 +96,7 @@
     <!--SCRIPTS-->
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
     <script src="/js/dependencies/sails.io.js"></script>
     <script src="/bower_components/angular-sails/dist/angular-sails.js"></script>
     <script src="/bower_components/lodash/dist/lodash.js"></script>
@@ -109,11 +110,17 @@
     <script src="/bower_components/angular-isotope/dist/angular-isotope.js"></script>
     <script src="/bower_components/angular-foundation/mm-foundation.js"></script>
     <script src="/src/app/app.js"></script>
+    <script src="/src/app/index/index.js"></script>
     <script src="/src/app/viewA/index.js"></script>
     <script src="/src/app/viewB/index.js"></script>
     <script src="/src/common/directives/index.js"></script>
     <script src="/src/common/directives/navbar/index.js"></script>
+    <script src="/src/common/directives/offnav/index.js"></script>
+    <script src="/src/common/directives/sidenav/index.js"></script>
     <script src="/src/common/models/index.js"></script>
+    <script src="/src/common/models/permissions.js"></script>
+    <script src="/src/common/models/roles.js"></script>
+    <script src="/src/common/models/users.js"></script>
     <script src="/src/common/services/Authenticate.js"></script>
     <script src="/src/common/services/config.js"></script>
     <script src="/src/common/services/index.js"></script>

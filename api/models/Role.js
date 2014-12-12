@@ -41,6 +41,11 @@ module.exports = {
             via: 'roles'
         },
 
+        badge: {
+            type: 'string',
+            defaultsTo: 'Vintage_badges1.png'        
+        },
+
         perishable: {
             type: 'boolean',
             defaultsTo: true
@@ -50,20 +55,30 @@ module.exports = {
 
     beforeDestroy: function(role, next) {
 
-        if (!role.perishable)
-            return next("This role is defined by the system and cannot be destroyed");
-        else
+       // if (!role.perishable)
+       //      return next("This role is defined by the system and cannot be destroyed");
+       //  else
             return next(null, role);
 
     },
 
-
+// this logic is completly wrong!!!!!
     beforeUpdate: function(role, next) {
+        sails.log.info(role);
 
-        if (role.perishable || role.perishable === false)
-            return next('You cannot update the perishable parameter. It can be only set upon role creation.');
-        else
-            next();
+        // if (role.id) {
+
+        // } else {
+        // // This needs a lot of consideration!
+        // if (role.perishable || role.perishable === true)
+        //     return next('You cannot update the perishable parameter. It can be only set upon role creation.');
+        // else
+        //     next();
+        // }
+
+        next();
+
+
     },
 
 
@@ -81,7 +96,7 @@ module.exports = {
                     seed = model.seeds();
                     // if the seed parameter is truthy, we plant the seed.
                     if (seed.seed && _.contains(seed.dependent, 'role')) {
-                        seed.plant(callback);
+                        seed.plant(callback);  
                     }
                 }
 
@@ -100,7 +115,8 @@ module.exports = {
                     description: "This role creates a system-level adminstrative role",
                     key: 'system_admin',
                     precedence: 0,
-                    perishable: false
+                    perishable: false,
+                    badge: 'Vintage_badges2.png'
                 },
 
                 {
@@ -108,7 +124,8 @@ module.exports = {
                     description: "This role creates an adminstrative role",
                     key: 'admin',
                     precedence: 5,
-                    perishable: false
+                    perishable: false,
+                    badge: 'Vintage_badges2.png'
                 },
 
                 {
@@ -116,7 +133,8 @@ module.exports = {
                     description: "This role creates an object-level adminstrative role",
                     key: 'object_admin',
                     precedence: 10,
-                    perishable: false
+                    perishable: false,
+                    badge: 'Vintage_badges3.png'
                 },
 
                 {
@@ -133,6 +151,7 @@ module.exports = {
                     key: 'visiting_user',
                     precedence: 20,
                     perishable: false
+
                 },
 
                 {
@@ -140,7 +159,8 @@ module.exports = {
                     description: "This role creates a basic user role and is the default for the system",
                     key: 'authenticated_user',
                     precedence: 25,
-                    perishable: false
+                    perishable: false,
+                    badge: 'Vintage_badges2.png'
                 },
 
                 {

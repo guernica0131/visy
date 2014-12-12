@@ -14,8 +14,6 @@ angular.module('directive.navbar', [])
                 function($scope, $element, config, lodash) {
 
                     var user = new Authenticate.User();
-                    $scope.brand = config.brand;
-
                     // we send the authentication data
                     $scope.authenticate = function(e) {
 
