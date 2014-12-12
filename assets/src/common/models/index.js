@@ -41,7 +41,7 @@ angular.module('models', [
             };
 
             this.connect = function(method, url, params) {
-                //var connecting = function() {
+
                 var deferred = $q.defer();
 
                 $sails[method](url, params).success(function(models) {
@@ -51,9 +51,6 @@ angular.module('models', [
                 });
 
                 return deferred.promise;
-                //};
-                //return connecting;
-
             }
 
 
