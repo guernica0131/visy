@@ -1,15 +1,100 @@
 <div>
-    <h1>Role Test</h1>
-    
-   <!--  <div ui-view="viewA"></div> 
-
-    <a ui-sref="viewA">Edit</a> -->
-   	<section class="role-view" ng-if="findPermits['can_find_role']">
-   		<article ng-repeat="r in roles track by $index">
-   			<h3>{{r.name}}</h3>
+	<h1>Role Test</h1>
 
 
-   		</article>
-   	</section>
+	<script type="text/ng-template" id="myModalContent.html">
+	<h3>Im a modal!</h3>
+	<p>Are you sure?</p>
+	<button class="button" ng-click="ok()">OK</button>
+	<a class="close-reveal-modal" ng-click="cancel()">&#215;</a>
+	</script>
+	
+	<!--  <div ui-view="viewA"></div>
+	<a ui-sref="viewA">Edit</a> -->
 
+
+	<section class="role-view" ng-if="permits['role']['can_find_role']">
+		<header>
+			<div class="row">
+				<div class="large-4 medium 4 columns">
+					<select ng-options='p for p in ["precedence", "updatedAt"]' ng-model="predicate" ng-init="predicate = 'id'" >
+						<option value="">-- choose sort order --</option>
+					</select>
+				</div>
+				<div class="large-4 medium-4 columns">
+				</div>
+				<div class="large-4 medium-4 columns">
+				</div>
+			</div>
+		</header>
+
+		<!-- <article ng-repeat="r in roles | orderBy: predicate track by $index" ng-class="{new:editor['roles'][getIndex(r.id, $index)].isNew}">
+			<div ng-show="editor['roles'][getIndex(r.id, $index)].pivot">
+				<label class="error" > 
+					<input  type="text" ng-model="r.name" placeholder="Please add a name"  ng-class="{error:editor['roles'][getIndex(r.id, $index)].name}" required/>
+				</label>
+				<small ng-show="editor['roles'][getIndex(r.id, $index)].name" class="error">The title is required</small>
+			</div>
+			<h3 ng-hide="editor['roles'][getIndex(r.id, $index)].pivot">{{r.name}}</h3>
+			<div class="row">
+				<div class="large-4 medium-4 columns">
+					<figure>
+						<img ng-src="images/{{r.badge}}" alt="Badge image for {{r.name}}"/>
+						<figcaption></figcation>
+					</figure>
+				</div>
+				<div class="large-6 medium-6 columns">
+					<article>
+						<textarea ng-show="editor['roles'][getIndex(r.id, $index)].pivot" ng-model="r.description" placeholder="Describe this role"></textarea>
+						<p ng-hide="editor['roles'][getIndex(r.id, $index)].pivot">{{r.description}}</p>
+					</article>
+				</div>
+				<div class="large-2 medium-2 columns">
+					<ul class="side-nav">
+						<li ng-show="permits['role']['can_update_role']"><a ng-click="changeModelState(0, getIndex(r.id, $index))" >{{buttonOptions[editor['roles'][getIndex(r.id, $index)].pivot]['name']}}</a></li>
+						<li ng-show="permits['role']['can_destroy_role']"><a ng-click="changeModelState(1 , getIndex(r.id, $index))">{{buttonOptions[editor['roles'][getIndex(r.id, $index)].pivot + 1]['name']}}</a></li>
+					</ul>
+					
+				</div>
+			</div>
+		</article> -->
+
+
+		<article ng-repeat="r in roles | orderBy: predicate track by $index" ng-class="{new:r.editor.isNew}">
+			<div ng-show="r.editor.pivot">
+				<input  type="text" ng-model="r.name" placeholder="Please add a name"  ng-class="{error:r.editor.required.name}" required/>
+				<small ng-show="r.editor.required.name" class="error">The title is required</small>
+			</div>
+
+			<h3 ng-hide="r.editor.pivot">{{r.name}}</h3>
+			<div class="row">
+				<div class="large-4 medium-4 columns">
+					<figure>
+						<img ng-src="images/{{r.badge}}" alt="Badge image for {{r.name}}"/>
+						<figcaption></figcation>
+					</figure>
+				</div>
+				<div class="large-6 medium-6 columns">
+					<article>
+						<textarea ng-show="r.editor.pivot" ng-model="r.description" placeholder="Describe this role"></textarea>
+						<p ng-hide="r.editor.pivot">{{r.description}}</p>
+					</article>
+				</div>
+				<div class="large-2 medium-2 columns">
+					<ul class="side-nav">
+						<li ng-show="permits['role']['can_update_role']"><a ng-click="changeModelState(r, 0)" >{{buttonOptions[(r.editor.pivot) ? r.editor.pivot : 0]['name']}}</a></li>
+						<li ng-show="permits['role']['can_destroy_role']"><a ng-click="changeModelState(r , 1)">{{buttonOptions[(r.editor.pivot) ? r.editor.pivot + 1 : 1]['name']}}</a></li>
+					</ul>
+					
+				</div>
+			</div>
+		</article>
+
+		<div class="row">
+			<div class="large-2 medium-2 columns">
+				<input type="button" class="button" ng-click="create()" value="Create role">
+			</div>
+		</div>
+
+	</section>
 </div>

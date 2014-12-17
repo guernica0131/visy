@@ -43,7 +43,7 @@ module.exports = {
             user = req.param('user') || req.user;
 
         if (!can)
-        	return res.badRequest("Can what? I need a valid questin to process request");
+        	return res.badRequest("Can what? I need a valid question to process request");
 
         if (!user)
             return res.badRequest("I need a valid user to process request");

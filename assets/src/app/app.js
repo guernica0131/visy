@@ -22,42 +22,62 @@
     .constant('CAN', function() {
 
         var all = [{
-            permit: 'can_find_user',
-            name: 'Users',
-            model: 'user'
-        }, {
-            permit: 'can_find_role',
-            name: 'Roles',
-            model: 'role'
-        }, {
-            permit: 'can_find_permission',
-            name: 'Permissions',
-            model: 'permission'
-        }, {
-            permit: 'can_find_domain',
-            name: 'Domains',
-            model: 'domain'
-        }, {
-            permit: 'can_find_portal',
-            name: 'Portals',
-            model: 'portal'
-        }, {
-            permit: 'can_find_collection',
-            name: 'Collections',
-            model: 'collection'
-        }, {
-            permit: 'can_find_document',
-            name: 'Documents',
-            model: 'document'
-        }, {
-            permit: 'can_find_tag',
-            name: 'Tags',
-            model: 'tag'
-        }, {
-            permit: 'can_find_category',
-            name: 'Categories',
-            model: 'category'
-        }];
+                permit: 'can_find_user',
+                name: 'Users',
+                model: 'user'
+            }, {
+                permit: 'can_find_role',
+                name: 'Roles',
+                model: 'role'
+            }, 
+            // {
+            //     permit: 'can_create_role',
+            //     name: 'Create Role',
+            //     model: 'role'
+            // },
+
+            // {
+            //     permit: 'can_edit_role',
+            //     name: 'Edit Role',
+            //     model: 'role'
+            // },
+
+            // {
+            //     permit: 'can_destroy_role',
+            //     name: 'Delete Role',
+            //     model: 'role'
+            // },
+
+            {
+                permit: 'can_find_permission',
+                name: 'Permissions',
+                model: 'permission'
+            }, {
+                permit: 'can_find_domain',
+                name: 'Domains',
+                model: 'domain'
+            }, {
+                permit: 'can_find_portal',
+                name: 'Portals',
+                model: 'portal'
+            }, {
+                permit: 'can_find_collection',
+                name: 'Collections',
+                model: 'collection'
+            }, {
+                permit: 'can_find_document',
+                name: 'Documents',
+                model: 'document'
+            }, {
+                permit: 'can_find_tag',
+                name: 'Tags',
+                model: 'tag'
+            }, {
+                permit: 'can_find_category',
+                name: 'Categories',
+                model: 'category'
+            }
+        ];
 
         return {
             all: all
@@ -98,6 +118,12 @@
 
             $scope.findPermits = {};
 
+            $scope.permits = {};
+
+
+            $scope.ready = false;
+            $scope.$broadcast('ready', false);
+
 
 
             var permits = [];
@@ -133,7 +159,7 @@
 
 
             // we set the authenticated user
-            new Authenticate.User(true, function(user) {                
+            new Authenticate.User(true, function(user, space) {
                 // for permission testing
                 var user = new Authenticate.User();
                 //console.log("User auth boostrap", user.get('user'));
@@ -141,15 +167,21 @@
                     user.can(permits).then(function(res) {
                         //console.log("My respinse" , res);
                         $scope.findPermits = res;
-                         
+                        $scope.ready = true;
+                        $scope.$broadcast('ready', true);
 
                     }, function(reason) {
                         $scope.findPermits = {};
+                        $scope.permits = {};
                         //console.log("Rejected", reason);
                     });
-
-
+                else {
+                    $scope.permits = {};
                     $scope.findPermits = {};
+                }
+
+
+                
             });
 
 

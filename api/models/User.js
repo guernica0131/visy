@@ -137,7 +137,10 @@ module.exports = {
                     } else {
                         // if there is no has no object role, then we default to 
                         // the site role.
-                        self._can(this.user.siterole.key);
+                        if (this.user.siterole && this.user.siterole.key)
+                            self._can(this.user.siterole.key);
+                        else //otherwise we default to annonymous
+                            self._can('anonymous_user');
                     }
 
                 }
@@ -173,7 +176,7 @@ module.exports = {
             //console.log("In little key", current_key);
             Role.findOneByKey(current_key).populate('permissions').exec(function(err, role) {
                 // if we have an error, we reject the request
-                if (err) return self.setResponse(false);
+                if (err || !role) return self.setResponse(false);
                 // we see what keys the role has
                 var permits = _.pluck(role.permissions, 'key');
                 // if it contains the key

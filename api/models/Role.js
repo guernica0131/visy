@@ -25,7 +25,7 @@ module.exports = {
         precedence: {
             type: 'integer',
             unique: true,
-            min: 0
+          //  min: 0
         },
 
         key: {
@@ -46,7 +46,7 @@ module.exports = {
             defaultsTo: 'Vintage_badges1.png'        
         },
 
-        perishable: {
+        perishable: {        
             type: 'boolean',
             defaultsTo: true
         }
@@ -112,16 +112,16 @@ module.exports = {
 
                 {
                     name: 'System Administrator',
-                    description: "This role creates a system-level adminstrative role",
+                    description: "This role creates a system-level administrative role",
                     key: 'system_admin',
-                    precedence: 0,
+                    precedence: 100,
                     perishable: false,
                     badge: 'Vintage_badges2.png'
                 },
 
                 {
                     name: 'Administrator',
-                    description: "This role creates an adminstrative role",
+                    description: "This role creates an administrative role",
                     key: 'admin',
                     precedence: 5,
                     perishable: false,
@@ -139,7 +139,7 @@ module.exports = {
 
                 {
                     name: 'Member User',
-                    description: "This role is defined as a member of a space but generally has no adminstrative rights",
+                    description: "This role is defined as a member of a space but generally has no administrative rights",
                     key: 'member',
                     precedence: 15,
                     perishable: false
@@ -147,7 +147,7 @@ module.exports = {
 
                 {
                     name: 'Visiting User',
-                    description: "This role is defined as a user who enters a public space but is not an actual member.",
+                    description: "This role is defined as a user who entered a public space but is not an actual member.",
                     key: 'visiting_user',
                     precedence: 20,
                     perishable: false
