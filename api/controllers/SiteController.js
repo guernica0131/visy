@@ -16,7 +16,24 @@ module.exports = {
 		if (!model)
 			return res.badRequest("There is no definition for your model, '" + m + "'.");
 
-		res.send(model._attributes);
+		var attributes = _.clone(model._attributes);
+
+		delete attributes.id;
+		delete attributes.updatedAt;
+		delete attributes.createdAt;
+
+		res.send(attributes);
+
+	},
+
+
+	admin: function(req, res) {
+
+		//can_manage_site_content
+		
+
+
+		res.view('admin/index');
 
 	}
 	

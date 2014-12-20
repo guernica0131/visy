@@ -27,7 +27,8 @@
     "angular-translate": "~2.1.0",
     "angular-translate-loader-static-files": "~2.1.0",
     "angular-foundation ": "~0.4.0",
-    "angular-isotope": "~0.1.8"
+    "angular-isotope": "~0.1.8",
+    "pluralize": "~1.1.0"
   },
   "dependencies": {
     "angular-rx-data-table": "~0.4.10",

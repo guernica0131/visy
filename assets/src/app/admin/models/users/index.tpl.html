@@ -1,0 +1,33 @@
+<div> <!-- optionally add elements -->
+<article ng-repeat="r in users|orderBy:predicate:reverse|filter:search track by $index" ng-class="{new:r.editor.isNew}">
+	
+	<div class="row">
+		<div class="large-4 medium-4 columns">
+			<div ng-show="r.editor.pivot">
+				<input  type="text" ng-model="r.first_name" placeholder="Please add a first name"  ng-class="{error:r.editor.required.fist_name}" required/>
+				<small ng-show="r.editor.required.fist_name" class="error">The title is required</small>
+			</div>
+			<h3 ng-hide="r.editor.pivot">{{r.first_name}}</h3>
+		</div>
+		
+		<div class="large-4 medium-4 columns">
+			<div ng-show="r.editor.pivot">
+				<input  type="text" ng-model="r.last_name" placeholder="Please add a last name"  ng-class="{error:r.editor.required.last_name}" required/>
+				<small ng-show="r.editor.required.name" class="error">The title is required</small>
+			</div>
+			<h3 ng-hide="r.editor.pivot">{{r.last_name}}</h3>
+		</div>
+		
+		<div class="large-2 medium-2 columns">
+			<ul class="side-nav" >
+				<li ng-show="permits['user']['can_update_user']"><a ng-click="changeModelState(r, 0)" >{{buttonOptions[(r.editor.pivot) ? r.editor.pivot : 0]['name']}}</a></li>
+				<li ng-show="permits['user']['can_destroy_user']"><a ng-click="changeModelState(r , 1)">{{buttonOptions[(r.editor.pivot) ? r.editor.pivot + 1 : 1]['name']}}</a></li>
+			</ul>
+			
+		</div>
+	</div>
+	<div class="row">
+		
+	</div>
+</article>
+</div>

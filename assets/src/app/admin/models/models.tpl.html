@@ -1,0 +1,45 @@
+<div>
+	<h3>{{heading}}</h3>
+
+	
+
+	<section class="{{model}}-view" > <!--  ng-if="permits[ '{{model}}' ][ 'can_find_{{model}}'  ]">  -->
+		<header>
+			<div class="row">
+				<div class="large-4 medium 4 columns">
+					<select ng-options='p.name for p in predicates track by p.value' ng-model="predicate" ng-init="predicate = 'id'" >
+						<option value="">-- choose sort order --</option>
+					</select>
+				</div>
+				<div class="large-6 medium-6 columns">
+					<input type="search" placeholder="Search the {{mNames}}" ng-model="search" />
+				</div>
+				<div class="large-2 medium-2 columns">
+					<label> Descending 
+						<input type="checkbox" ng-model="reverse"  />
+					</label>
+				</div>
+				
+			</div>
+		</header>
+
+		<div ui-view="admin.models"></div>
+
+		<div class="row" ><!-- ng-show="permits[ '{{model}}'' ][ 'can_create_{{model}}'  ]">  -->
+			<div class="large-2 medium-2 columns">
+				<input type="button" class="button" ng-click="createModel()" value="Create {{model}}">
+			</div>
+		</div>
+
+
+
+		</section>
+
+
+
+
+
+
+</div>
+
+

@@ -81,11 +81,24 @@ module.exports = {
     seeds: function() {
 
         var plant = function(cb) {
-            cb(null, "Pass");
+            
+            Permission.create([
+                {
+                    name: "Manage Site Content ",
+                    description: 'Allows permission for managing site content',
+                    controller: 'site',
+                    action: 'admin',
+                    key: 'can_manage_site_content' ,
+                    perishable: false
+                }
+
+            ], cb);
+
+
         };
 
         return {
-            seed: false,
+            seed: true,
             plant: plant
         }
     },

@@ -2,13 +2,66 @@
 
     angular.module('models', [
         // add models here
-        'models.role'
+        'models.role',
+        'models.user',
+        'models.permission'
+
 
     ])
+
+    .constant('Modeling', {
+        role: {
+            model: 'RoleModel'
+        },
+
+        user: {
+            model: 'UserModel',
+        },
+
+        permission: {
+            model: 'PermissionModel'
+        }
+
+    })
 
 
     .service('Model', ['$q', 'lodash', 'utils', '$sails', '$timeout', 'Authenticate',
         function($q, lodash, utils, $sails, $timeout, Authenticate) {
+
+            /*
+             * Privates
+             */
+
+            var _init = function(callback) {
+
+                if ($sails.socket.connected)
+                    return callback();
+                // potential logical error. If the connection
+                // happends before this, then what? Need to reconsider the function
+                $sails.on('connect', function() {
+                    callback();
+                });
+
+            };
+
+            var _connect = function(method, url, params) {
+
+                var deferred = $q.defer();
+
+
+                _init(function() {
+                    $sails[method](url, params).success(function(models) {
+                        return deferred.resolve(models);
+                    }).error(function(why) {
+                        return deferred.reject(why);
+                    });
+
+                });
+
+                return deferred.promise;
+            };
+
+
             /*
              * Model
              *
@@ -26,40 +79,7 @@
 
                 if (!this.$scope[this.modelName])
                     this.$scope[this.modelName] = [];
-
-                this.init = function(callback) {
-
-                    if ($sails.socket.connected)
-                        return callback();
-                    // potential logical error. If the connection
-                    // happends before this, then what? Need to reconsider the function
-                    $sails.on('connect', function() {
-                        callback();
-                    });
-
-                };
-
-                this.connect = function(method, url, params) {
-
-                    var deferred = $q.defer();
-
-
-                    this.init(function() {
-
-                        $sails[method](url, params).success(function(models) {
-                            return deferred.resolve(models);
-                        }).error(function(why) {
-                            return deferred.reject(why);
-                        });
-
-                    });
-
-                    return deferred.promise;
-                };
-
             };
-
-
 
             /*
              * setPermissions
@@ -77,7 +97,7 @@
 
                 var url = self.url + '/permissions';
 
-                this.connect('get', url, null).then(function(options) {
+                _connect('get', url, null).then(function(options) {
 
                     var u = new Authenticate.User();
                     // now we can user.can to see if the user can perform the various actions
@@ -183,15 +203,11 @@
                 var self = this;
 
 
-                this.connect('get', url, params).then(function(res) {
+                _connect('get', url, params).then(function(res) {
                     if (!soft)
                         self.$scope[self.modelName] = (lodash.isArray(res)) ? res : [res];
                     return deferred.resolve(res);
-
-                }, function(why) {
-                    console.err(why);
-                    return deferred.reject(why);
-                })
+                }, deferred.reject);
 
 
 
@@ -216,22 +232,18 @@
                 index = position || this.$scope[this.modelName].length,
                 self = this;
 
-
-
-                this.connect('post', self.url, newModel).then(function(res) {
-
+                _connect('post', self.url, newModel).then(function(res) {
+                    // now we push the object into it's index
                     self.$scope[self.modelName].splice(index, 0, res);
-
                     deferred.resolve(res);
                 }, function(why) {
-                    console.error(why);
                     if (!keep)
-                        $timeout(function() {
-                            self.$scope[self.modelName].splice(index, 1);
-                        }, 500);
-
+                        self.$scope[self.modelName].splice(index, 1);
                     // now we allert the dom
-                    deferred.reject(why);
+                    deferred.reject({
+                        rejected: newModel,
+                        why: why
+                    });
                 });
 
 
@@ -270,6 +282,8 @@
                     }),
                     index = lodash.indexOf(lodash.pluck(this.$scope[this.modelName], 'id'), id);
                 // reject if we don't have a valid index
+                //console.log("My preUpdate", preUpdate);
+
                 if (index === -1) {
                     deferred.reject('Invalid object');
                     return deferred.promise;
@@ -311,16 +325,12 @@
                 })));
                 // call init to ensure we are conntected to our sockets
 
-                this.connect('put', url, changed).then(function(res) {
-                    return deferred.resolve(res); // return the promise
-                }, function(why) {
-                    //self.$scope[self.modelName][index] = deleted;
-                    $timeout(function() {
-                        self.$scope[self.modelName][index] = preUpdate;
-                    }, 500);
-                    // here we would call the info directive
-                    console.error(why);
-                    return deferred.reject(why); // reject the promise
+                _connect('put', url, changed).then(deferred.resolve, function(why) {
+                    self.$scope[self.modelName][index] = preUpdate;
+                    deferred.reject({
+                        why: why,
+                        rejected: preUpdate
+                    }); // reject the promise
                 });
 
 
@@ -366,16 +376,18 @@
                 this.$scope[this.modelName].splice(index, 1);
 
 
-                this.connect('delete', url, null).then(function(res) {
+                _connect('delete', url, null).then(function(res) {
                     //console.log(res);
                     return deferred.resolve(res);
                 }, function(why) {
-                    $timeout(function() {
-                        self.$scope[self.modelName].splice(index, 0, deleted);
-                    }, 500);
+
+                    self.$scope[self.modelName].splice(index, 0, deleted);
                     // here we would call the info directive
-                    console.error(why);
-                    return deferred.reject(why);
+                    // console.error(why);
+                    return deferred.reject({
+                        why: why,
+                        rejected: deleted
+                    });
                 });
 
 
@@ -398,7 +410,7 @@
                 var self = this;
 
 
-                this.connect('get', url, null).then(function(res) {
+                _connect('get', url, null).then(function(res) {
                     return deferred.resolve(res);
                 }, function(why) {
                     console.error(why);
@@ -417,7 +429,7 @@
              */
             Model.prototype.register = function(callback) {
                 var self = this;
-                this.init(function() {
+                _init(function() {
                     $sails.on(self.model, callback);
                 });
             };
@@ -426,6 +438,233 @@
                 object: Model
             }
 
+
+
+        }
+    ])
+
+    .service('ModelEditor', ['lodash', '$q', '$rootScope',
+        function(lodash, $q, $rootScope) {
+
+            var getIndex = function(id, models) {
+                //console.log("My index " + id, index);
+                if (id)
+                    return lodash.indexOf(lodash.pluck(models, 'id'), id);
+                else
+                    return -1;
+            };
+
+            var validate = function(model) {
+                var definition = this.definition;
+
+                var required = {};
+
+                lodash.each(definition, function(el, key) {
+                    // just doing required for now
+                    if (el.required && !model[key]) {
+                        required[key] = true;
+                    }
+
+                });
+
+                return required;
+            };
+
+            var build = function(callback) {
+                var unique = lodash.uniqueId('new_model_'),
+                    // more generic from definitions
+                    definition = this.definition,
+                    obj = {
+                        id: unique
+                    };
+
+                lodash.each(definition, function(el, key) {
+                    // var type = {
+                    // 	'boolean':false,
+                    // 	'collection': [],
+                    // 	'integer': 0,
+                    // 	'json': {}, 
+                    // }
+
+                    if (!el.defaultsTo) {
+
+                        switch (el.type) {
+                            case 'boolean':
+                                obj[key] = false;
+                                break;
+                            case 'collection':
+                                obj[key] = [];
+                                break;
+                            case 'integer':
+                                obj[key] = 0;
+                                break;
+                            case 'json':
+                                obj[key] = {};
+                                break;
+                            default:
+                                obj[key] = '';
+                        };
+                    } else
+                        obj[key] = el.defaultsTo;
+
+                });
+
+                obj.editor = {
+                    pivot: 2,
+                    id: unique,
+                    isNew: true
+                };
+
+                callback(obj);
+
+
+            };
+
+
+
+            var MView = function($scope, model, modelName) {
+
+
+                this.$scope = $scope || $rootScope;
+                this.mName = modelName || lodash.uniqueId('model_entities_');
+                this.model = model;
+                this.definition;
+
+            };
+
+
+            MView.prototype.start = function(listen, callback) {
+
+                var model = this.model,
+                    self = this;
+
+                if (!model)
+                    throw "The model for this action is currently undefined";
+                if (listen)
+                    model.listen();
+
+                model.define().then(function(res) {
+                    self.definition = res;
+                })
+
+                model.setPermissions();
+
+                model.get().then(callback);
+
+
+            };
+
+            MView.prototype.create = function() {
+
+                console.log("Creates");
+
+                /*
+                 * Here we create from the definitions
+                 */
+                var deferred = $q.defer(),
+                    self = this,
+                    builder = lodash.bind(build, this);
+                builder(function(obj) {
+                    self.$scope[self.mName].push(obj);
+                    return deferred.resolve();
+                });
+
+                return deferred.promise;
+            };
+
+
+            MView.prototype.edit = function(model) {
+                var deferred = $q.defer();
+
+                model.editor.pivot ^= 2;
+                model.editor.save = angular.copy(model);
+
+                deferred.resolve();
+
+                return deferred.promise;
+
+            };
+
+            MView.prototype.save = function(model) {
+
+                var deferred = $q.defer();
+
+                if (!model)
+                    return;
+
+                // we set our require variable
+                var require = validate.bind(this);
+                // this sets what is required
+                model.editor.required = require(model);
+                // if any are true we return;
+                if (lodash.some(model.editor.required))
+                    return;
+
+                var self = this;
+                // if we have a new object, we need to do a bit more
+                if (model.editor.isNew) {
+
+                    var saved = angular.copy(model),
+                        index = getIndex(model.id, this.$scope[this.mName]);
+
+                    // now kill it
+                    this.$scope[this.mName].splice(index, 1);
+
+                    delete model.id;
+                    delete model.editor;
+
+                    this.model.create(model, null, true).then(deferred.resolve, function(why) {
+                        // if we fail we spice the old model back in
+                        self.$scope[self.mName].splice(index, 0, saved);
+
+                        return deferred.reject(nModel);
+                    });
+
+                    return deferred.promise;
+                }
+
+                var editor = angular.copy(model.editor);
+
+                delete model.editor;
+                // call the model's update
+                this.model.update(model).then(deferred.resolve, function(rejection) {
+                    console.error(rejection.why);
+                    rejection.rejected.editor = editor;
+                });
+
+                return deferred.promise;
+
+            };
+
+            MView.prototype.delete = function(model) {
+                var deferred = $q.defer();
+                this.model.delete(model).then(deferred.resolve, deferred.reject);
+                return deferred.promise;
+            };
+
+            MView.prototype.cancel = function(model) {
+
+                var deferred = $q.defer(),
+                    index = getIndex(model.id, this.$scope[this.mName]);
+
+                if (model.editor.isNew)
+                    return this.$scope[this.mName].splice(index, 1);
+
+                var saved = angular.copy(model.editor.save);
+                saved.editor = {
+                    pivot: 0
+                };
+
+                this.$scope[this.mName][index] = angular.copy(saved);
+
+                deferred.resolve();
+                return deferred.promise;
+
+
+            };
+
+
+            return MView
 
 
         }

@@ -1,0 +1,41 @@
+<article ng-repeat="r in roles | orderBy:predicate:reverse |filter:search track by $index" ng-class="{new:r.editor.isNew}"  ng-controller="RolesController">
+	<div ng-show="r.editor.pivot">
+		<input  type="text" ng-model="r.name" placeholder="Please add a name"  ng-class="{error:r.editor.required.name}" required/>
+		<small ng-show="r.editor.required.name" class="error">The title is required</small>
+	</div>
+	<h3 ng-hide="r.editor.pivot">{{r.name}}</h3>
+	<div class="row">
+		<div class="large-4 medium-4 columns">
+			<figure>
+				<img ng-src="images/{{r.badge}}" alt="Badge image for {{r.name}}"/>
+				<figcaption></figcation>
+			</figure>
+		</div>
+		<div class="large-6 medium-6 columns">
+			<article>
+				<textarea ng-show="r.editor.pivot" ng-model="r.description" placeholder="Describe this role"></textarea>
+				<p ng-hide="r.editor.pivot">{{r.description}}</p>
+			</article>
+			<a ui-sref="models.association({model: 'role', association: 'permissions' , id: r.id })" ng-show="permits['role']['can_populate_permissions_from_role']">Permissions</a> 
+		</div>
+		<div class="large-2 medium-2 columns">
+			<ul class="side-nav" ng-show="r.perishable">
+				<li ng-show="permits['role']['can_update_role']"><a ng-click="changeModelState(r, 0)" >{{buttonOptions[(r.editor.pivot) ? r.editor.pivot : 0]['name']}}</a></li>
+				<li ng-show="permits['role']['can_destroy_role']"><a ng-click="changeModelState(r , 1)">{{buttonOptions[(r.editor.pivot) ? r.editor.pivot + 1 : 1]['name']}}</a></li>
+			</ul>
+			
+		</div>
+	</div>
+	<div class="row">
+		<div  class="large-4 medium-4 columns" ng-show="r.editor.pivot">
+			<input  type="text" ng-model="r.key" placeholder="Please add a unique key"  ng-class="{error:r.editor.required.key}" required/>
+			<small ng-show="r.editor.required.key" class="error">A unique key is required</small>
+		</div>
+		<div  class="large-6 medium-6 columns" >
+		
+		</div>
+		<div  class="large-2 medium-2 columns" >
+
+		</div>
+	</div>
+</article>

@@ -49,6 +49,11 @@
     view: 'index'
   },
 
+  'get /admin*':'SiteController.admin',
+  //   'controller': 'SiteController.admin', 
+  //    'auth/index'
+  // }, 
+
 
 
   'GET /login': 'AuthController.li',

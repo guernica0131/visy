@@ -46,7 +46,7 @@ var jsFilesToInject = [
     'bower_components/lodash/dist/lodash.js',
     //Load sails.io before everything else
     'js/dependencies/sails.io.js',
-
+    'bower_components/pluralize/pluralize.js',
     // Dependencies like jQuery, or Angular are brought in here
     //'js/dependencies/**/*.js',
 

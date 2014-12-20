@@ -11,10 +11,13 @@ module.exports = {
         permissible: true
     },
 
+    schema: true,
+
     attributes: {
 
         name: {
             type: 'string',
+            required: true,
             max: 20
         },
 
@@ -22,18 +25,17 @@ module.exports = {
             type: 'string'
         },
         // the lower the higher it is
-        precedence: {
-            type: 'integer',
-            unique: true,
-          //  min: 0
-        },
+        // precedence: {
+        //     type: 'integer',
+        //     unique: true,
+        //     //  min: 0
+        // },
 
         key: {
             type: 'string',
             required: true,
             unique: true
         },
-
 
         permissions: {
             collection: 'permission',
@@ -43,10 +45,10 @@ module.exports = {
 
         badge: {
             type: 'string',
-            defaultsTo: 'Vintage_badges1.png'        
+            defaultsTo: 'Vintage_badges1.png'
         },
 
-        perishable: {        
+        perishable: {
             type: 'boolean',
             defaultsTo: true
         }
@@ -55,29 +57,32 @@ module.exports = {
 
     beforeDestroy: function(role, next) {
 
-       // if (!role.perishable)
-       //      return next("This role is defined by the system and cannot be destroyed");
-       //  else
-            return next(null, role);
+        if (!role.id && !role.where.id )
+            return next('Please include the role ID for updating this model');
+        var id = role.id || role.where.id;
 
+        Role.findOneById(id).then(function(r) {
+            if (!r.perishable)
+                return next("A model marked as nonperishable can not be altered or destroyed.");
+            next();
+
+        });
     },
 
-// this logic is completly wrong!!!!!
+    // this logic is completly wrong!!!!!
     beforeUpdate: function(role, next) {
-        sails.log.info(role);
 
-        // if (role.id) {
+        if (!role.id)
+            return next('Please include the role ID for updating this model');
 
-        // } else {
-        // // This needs a lot of consideration!
-        // if (role.perishable || role.perishable === true)
-        //     return next('You cannot update the perishable parameter. It can be only set upon role creation.');
-        // else
-        //     next();
-        // }
+        Role.findOneById(role.id).then(function(r) {
 
-        next();
+            if (r.perishable != role.perishable)
+                return next("A model marked as nonperishable can not be altered or destroyed.");
+            
+            next();
 
+        });
 
     },
 
@@ -96,7 +101,7 @@ module.exports = {
                     seed = model.seeds();
                     // if the seed parameter is truthy, we plant the seed.
                     if (seed.seed && _.contains(seed.dependent, 'role')) {
-                        seed.plant(callback);  
+                        seed.plant(callback);
                     }
                 }
 
@@ -114,7 +119,7 @@ module.exports = {
                     name: 'System Administrator',
                     description: "This role creates a system-level administrative role",
                     key: 'system_admin',
-                    precedence: 100,
+                    //precedence: 0,
                     perishable: false,
                     badge: 'Vintage_badges2.png'
                 },
@@ -123,33 +128,33 @@ module.exports = {
                     name: 'Administrator',
                     description: "This role creates an administrative role",
                     key: 'admin',
-                    precedence: 5,
+                  //  precedence: 5,
                     perishable: false,
                     badge: 'Vintage_badges2.png'
                 },
 
-                {
-                    name: 'Object Administrator',
-                    description: "This role creates an object-level adminstrative role",
-                    key: 'object_admin',
-                    precedence: 10,
-                    perishable: false,
-                    badge: 'Vintage_badges3.png'
-                },
+                // {
+                //     name: 'Manager',
+                //     description: "This role creates an object-level adminstrative role",
+                //     key: 'manager',
+                //    // precedence: 10,
+                //     perishable: false,
+                //     badge: 'Vintage_badges3.png'
+                // },
 
                 {
-                    name: 'Member User',
+                    name: 'Member',
                     description: "This role is defined as a member of a space but generally has no administrative rights",
-                    key: 'member',
-                    precedence: 15,
+                    key: 'member_user',
+                   // precedence: 15,
                     perishable: false
                 },
 
                 {
-                    name: 'Visiting User',
+                    name: 'Visitor',
                     description: "This role is defined as a user who entered a public space but is not an actual member.",
                     key: 'visiting_user',
-                    precedence: 20,
+                   // precedence: 20,
                     perishable: false
 
                 },
@@ -158,7 +163,7 @@ module.exports = {
                     name: 'Authenticated User',
                     description: "This role creates a basic user role and is the default for the system",
                     key: 'authenticated_user',
-                    precedence: 25,
+                  //  precedence: 25,
                     perishable: false,
                     badge: 'Vintage_badges2.png'
                 },
@@ -167,7 +172,7 @@ module.exports = {
                     name: 'Anonymous User',
                     description: "This role creates a user that has not been defined yet",
                     key: 'anonymous_user',
-                    precedence: 30,
+                  //  precedence: 30,
                     perishable: false
                 }
 
