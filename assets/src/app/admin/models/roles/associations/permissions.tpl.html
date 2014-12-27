@@ -1,6 +1,19 @@
 <div ng-controller="RolesPermissionController">
-	<h1>I am here !!!!! DOING SOME PERMITTING</h1>
+	<header>
+		<h1>Permissions for {{role[0].name}}</h1>
+	</header>
 
+	<main>
+		<ul class="no-bullet">
+			<li>
+				<article  class="checkout panel" ng-class="{selected: isSelected[p.id], busy: associating}" ng-click="setAssociation(p.id)" ng-init="isSelected(p.id)"  ng-repeat="p in permissions |filter:search| filter:{controller: predicate.value}  ">
+					<h3>{{p.name}}</h3>
+					<p>{{p.description}}</p>
+
+				</article>
+			</li>
+		</ul>
+	</main>
 	
-	<a ui-sref="models.model.roles"><< Back</a>	
+	<a ui-sref="models.model.render({model: 'roles'})"><< Back</a>
 </div>

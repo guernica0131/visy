@@ -9,7 +9,7 @@
 <nav>
   <ul class="side-nav">
     <li class="heading">Site Administration</li>
-    <li ng-repeat="a in adminOptions" data-search="{{a.name}}" ng-show="findPermits[a.permit]"><a ui-sref="models.model.{{a.route}}" ui-sref-active="active">{{a.name}}</a></li>
+    <li ng-repeat="a in adminOptions" data-search="{{a.name}}" ng-show="findPermits[a.permit]"><a ui-sref="models.model.render({model: a.route})" ui-sref-active="active">{{a.name}}</a></li>
     <li class="divider"></li>
 
     <!-- <li><a href="../index.html" data-search="">Users</a></li>

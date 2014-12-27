@@ -13,8 +13,9 @@ angular.module('admin.roles', [])
 //     }
 // ])
 
-.controller('RolesController', ['$scope', 'RoleModel', '$timeout', 'lodash', '$modal', 'ModelEditor',
-    function RolesController($scope, RoleModel, $timeout, lodash, $modal, ModelEditor) {
+.controller('RolesController', ['$scope', 
+    function RolesController($scope) {
+
 
 
 
@@ -23,9 +24,32 @@ angular.module('admin.roles', [])
 ])
 
 
-.controller('RolesPermissionController', ['$scope', 'RoleModel', '$timeout', 'lodash', '$modal', 'ModelEditor',
-    function RolesPermissionController($scope, RoleModel, $timeout, lodash, $modal, ModelEditor) {
-        console.log("Permission controller");
+.controller('RolesPermissionController', ['$scope', 'lodash', 'CAN', 'Plural',
+    function RolesPermissionController($scope, _, CAN, Plural) {
+       // console.log("Permission controller", $scope.roles);
+
+        //$scope.role = $scope.$parent.roles;
+
+        //$scope.permissions = $scope.$parent.permissions;
+
+        
+
+        $scope.$parent.$parent.predicates = _.map(CAN().all, function(c) {
+            return {name:  _.capitalize(c.model), value: c.model };
+        });
+
+        $scope.$watch('predicate', function(newOne, old) {
+
+            if (newOne && newOne.value)
+                $scope.Associated.get(null, {controller: newOne.value});
+
+        });
+
+// //$scope.$parent.$parent.predicates = [{name: 'Test', value: 'model'}];
+
+       // console.log("I can!" , $scope.$parent.predicates);
+
+
 
 
 

@@ -9,7 +9,7 @@
 
 
 
-            //$urlRouterProvider.when('/admin/models/:o', '/admin/models/:o/');
+            $urlRouterProvider.when('/admin/models/', '/admin/models');
 
 
             // $urlRouterProvider.when('/admin/models', '/admin/models/');//.when('/admin/models/:/\w/i', '/admin/models/:/\w/i//');
@@ -24,22 +24,22 @@
                 ],
                 templateUrl: 'admin/models/layout.tpl.html', //'views/service/service.html',
             }).state('models.index', {
-                controller: 'ModelIndexController',
+                //controller: 'ModelIndexController',
                 templateUrl: 'admin/models/index.tpl.html'
             }).state('models.model', {
-                url: '{model}',
-                controller: 'ModelIndexController',
+                url: '{param}',
+                // controller: 'ModelIndexController',
                 templateUrl: 'admin/models/models.tpl.html'
             }).state('models.association', {
                 url: '/{model}/{id}/{association}',
                 controller: 'ModelAssociationController',
                 templateUrl: 'admin/models/association.tpl.html'
-            }).state('models.model.roles', {
-                url: '/roles',
+            }).state('models.model.render', {
+                url: '/{model}',
                 views: {
                     "admin.models": {
                         controller: 'ModelGeneratorController',
-                        templateUrl: 'admin/models/roles/index.tpl.html'
+                        templateUrl: 'admin/models/render.tpl.html'
                     }
                 },
                 data: {
@@ -48,22 +48,7 @@
                     collection: 'roles',
                     heading: 'Role configuration'
                 }
-            }).state('models.model.users', {
-                url: '/users',
-                views: {
-                    "admin.models": {
-                        controller: 'ModelGeneratorController',
-                        templateUrl: 'admin/models/users/index.tpl.html'
-                    }
-                },
-                data: {
-                    model: 'UserModel',
-                    name: 'user',
-                    collection: 'users',
-                    heading: 'User configuration'
-                }
-            })
-
+            });
 
 
         }
@@ -73,9 +58,6 @@
 
     .controller('ModelAssociationController', ['$scope', '$state', '$stateParams', '$injector', 'Plural', 'lodash',
         function ModelAssociationController($scope, $state, $stateParams, $injector, Plural, _) {
-            console.log("Permission controller", $stateParams);
-
-
 
             var model = Plural($stateParams.model, 1),
                 models = Plural($stateParams.model, 5),
@@ -86,31 +68,114 @@
                 Model,
                 Association;
 
-            try {
 
-                Model = $injector.get(cModel + "Model");
-                Association = $injector.get(cAssociation + "Model");
+            var start = function() {
 
-            } catch (e) {
-                return console.error(e);
-            }
+                try {
 
+                    Model = $injector.get(cModel + "Model");
+                    Association = $injector.get(cAssociation + "Model");
 
-            var modeled = new Model($scope, model),
-                associated = new Model($scope, associations);
-
-
-            //admin/models/roles/associations/permissions.tpl.html
-            $scope.accTemplate = 'admin/models/roles/associations/permissions.tpl.html'; //'admin/models/' + models + '/associations/' + associations + '.tpl.html';
-
-            $scope.modeled = modeled;
-            $scope.associated = associated;
+                } catch (e) {
+                    return console.error(e);
+                }
 
 
-            // console.log("ASSOC1 model", 'admin/models/roles/associations/permissions.tpl.html');
+                var modeled = new Model($scope, model),
+                    associated = new Association($scope, associations);
 
-            // console.log("ASSOC2 model", $scope.template);
 
+                //admin/models/roles/associations/permissions.tpl.html
+                $scope.accTemplate = 'admin/models/' + models + '/associations/' + associations + '.tpl.html';
+
+                $scope.Modeled = modeled;
+                $scope.Associated = associated;
+
+
+                // we need to assign scroll handlers to this and to the generic other
+
+                modeled.get($stateParams.id).then(function() {
+                    // console.log("Assoc controller", $scope.roles);
+                }, console.error);
+                // pulls the first 30 
+                associated.get(null).then(function(res) {
+                    //console.log(res);
+                });
+
+
+                associated.count().then(function(c) {
+                    $scope.count = c.count;
+                });
+
+                $scope.isSelected = function(id) {
+
+                    if (!$scope[model] || !$scope[model][0] || !$scope[model][0][associations])
+                        return $scope.isSelected[id] = false;
+
+                    $scope.isSelected[id] = _.contains(_.pluck($scope[model][0][associations], 'id' ), id)
+
+
+                };
+
+                $scope.setAssociation = function(id) {
+
+                    
+
+
+
+                    if ($scope.associating || !$scope[model] || !$scope[model][0] || !$scope[model][0][associations])
+                        return;
+
+
+
+                    var assoc = _.pluck($scope[model][0][associations], 'id'),
+                        contains = _.contains(assoc, id);
+
+                    
+                    $scope.associating = true;
+
+                    $scope.isSelected[id] = !contains;
+                    if (contains)
+                        assoc = _.pull(assoc, id);
+                    else
+                        assoc.push(id);
+
+                    //assoc
+                    var obj = {};
+
+                    obj[associations] = assoc;
+
+                    
+                    $scope.Modeled.update($scope[model][0], obj).then(function(res) {
+                        $scope.associating = false;
+                    }, function(why) {
+                        $scope.associating = false;
+                        console.error(why);
+                    });
+
+
+                    
+
+
+
+                };
+
+
+
+
+            };
+
+
+            if ($scope.ready)
+                start();
+            else
+                $scope.$on('ready', function(e, ready) {
+                    if (ready)
+                        start();
+                });
+
+
+            $scope.isSelected = {};
 
 
         }
@@ -121,7 +186,7 @@
 
     .controller('ModelController', ['$scope', '$state', '$stateParams',
         function($scope, $state, $stateParams) {
-           
+
         }
     ])
 
@@ -154,31 +219,41 @@
 
 
 
-    .controller('ModelGeneratorController', ['$scope', '$state', '$injector', 'lodash', 'ModelEditor',
-        function($scope, $state, $injector, _, ModelEditor) {
-            console.log("Model gen controllers", $state.current.data);
+    .controller('ModelGeneratorController', ['$scope', '$state', '$injector', 'lodash', 'ModelEditor', '$stateParams', 'Plural',
+        function($scope, $state, $injector, _, ModelEditor, $stateParams, Plural) {
 
 
-
-            var data = $state.current.data,
+            var model = Plural($stateParams.model, 1),
+                models = Plural($stateParams.model, 5),
+                cModel = _.capitalize(model),
                 InjectedModel;
+
+
+
 
             try {
 
-                if (data.model)
-                    InjectedModel = $injector.get(data.model);
+                if (model)
+                    InjectedModel = $injector.get(cModel + "Model");
                 else
                     return;
             } catch (e) {
                 return console.error(e);
             }
 
-            var Model = new InjectedModel($scope, data.collection)
-            mView = new ModelEditor($scope, Model, data.collection);
 
-            $scope.heading = data.heading;
-            $scope.modelName = data.name;
-            $scope.collection = data.collection;
+            $scope.modelTemplate = 'admin/models/' + models + '/index.tpl.html';
+            //console.log("Model gen controllers", model);
+            var Model = new InjectedModel($scope, models)
+            mView = new ModelEditor($scope, Model, models);
+
+
+            $scope.Modeled = Model;
+            $scope.Editor = mView;
+
+            $scope.heading = cModel + ' configuration';
+            $scope.modelName = model;
+            $scope.collection = models;
             $scope.predicates = [{
                     name: 'Last Updated',
                     value: 'updatedAt'
@@ -194,9 +269,6 @@
 
             ];
 
-
-            // $scope.editor = {};
-            // $scope.editor[mName] = [];
             $scope.buttonOptions = [{
                 name: 'Edit',
                 action: mView.edit.bind(mView)
@@ -210,8 +282,6 @@
                 name: 'Cancel',
                 action: mView.cancel.bind(mView)
             }];
-
-
             /*
              * @consider
              */

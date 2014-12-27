@@ -83,6 +83,8 @@
   'get /api/:model/permissions' : 'PermissionController.permissions',
 
   'get /api/:model/define': 'SiteController.define',
+
+  'get /api/:model/count': 'SiteController.count',
 };
 
 

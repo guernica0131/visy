@@ -9,20 +9,6 @@
 
     ])
 
-    .constant('Modeling', {
-        role: {
-            model: 'RoleModel'
-        },
-
-        user: {
-            model: 'UserModel',
-        },
-
-        permission: {
-            model: 'PermissionModel'
-        }
-
-    })
 
 
     .service('Model', ['$q', 'lodash', 'utils', '$sails', '$timeout', 'Authenticate',
@@ -214,6 +200,26 @@
                 return deferred.promise;
             };
 
+             /*
+             * get
+             *
+             * @description : gets all or a single instance of a model.
+             * @param {number|object} id : optional id for the one model
+             * @param {object} params : the option query parameters
+             * @return {promise}
+             */
+            Model.prototype.count = function(id, params) {
+                var deferred = $q.defer();
+
+                var url = this.url + '/count';
+
+                _connect('get', url, params).then(deferred.resolve, deferred.reject);
+
+
+
+                return deferred.promise;
+            };
+
 
 
             /*
@@ -312,6 +318,7 @@
                  * }
                  *
                  */
+
                 var changed = lodash.cloneDeep((lodash.merge(self.$scope[self.modelName][index], updatedAttributes, function(a, b) {
                     if (lodash.isArray(a)) {
                         switch (options) {
@@ -323,9 +330,12 @@
                     }
 
                 })));
-                // call init to ensure we are conntected to our sockets
 
-                _connect('put', url, changed).then(deferred.resolve, function(why) {
+                // call init to ensure we are conntected to our sockets
+                _connect('put', url, changed).then(function(updated) {
+                    self.$scope[self.modelName][index] = updated;
+                    deferred.resolve(updated);
+                }, function(why) {
                     self.$scope[self.modelName][index] = preUpdate;
                     deferred.reject({
                         why: why,
@@ -443,18 +453,40 @@
         }
     ])
 
+    /*
+    * Model Editor
+    * 
+    * @description : ModelEditor manages the insertion of models and their manipulation
+    * 
+    */
+
     .service('ModelEditor', ['lodash', '$q', '$rootScope',
         function(lodash, $q, $rootScope) {
 
-            var getIndex = function(id, models) {
-                //console.log("My index " + id, index);
+            /*
+            * _getIndex
+            *
+            * @description : pulls the index of the selected model based
+            * on the model's id.
+            * @param {integer} id - the id of the model we are attempting to find
+            * @param {array} models - an array of the models we are searching
+            */
+            var _getIndex = function(id, models) {
                 if (id)
                     return lodash.indexOf(lodash.pluck(models, 'id'), id);
                 else
                     return -1;
             };
-
-            var validate = function(model) {
+            
+            /*
+            * _validate
+            *
+            * @description :  this private function ensure that required elements are 
+            * populated before allowing it to be submitted to the server
+            * @TODO :: Expand for other forms of validation
+            * @param {object} model - the model that we are attempting to validate
+            */
+            var _validate = function(model) {
                 var definition = this.definition;
 
                 var required = {};
@@ -470,7 +502,14 @@
                 return required;
             };
 
-            var build = function(callback) {
+            /*
+            * _buld
+            *
+            * @description : private funtion for building the default parameters based in the 
+            * model description
+            * @param {function} calback - callback for when the form is generated            
+            */
+            var _build = function(callback) {
                 var unique = lodash.uniqueId('new_model_'),
                     // more generic from definitions
                     definition = this.definition,
@@ -508,7 +547,7 @@
                         obj[key] = el.defaultsTo;
 
                 });
-
+                // here we are setting the pivot in edit mode
                 obj.editor = {
                     pivot: 2,
                     id: unique,
@@ -520,19 +559,30 @@
 
             };
 
-
-
+            /*
+            * MView object
+            * @contsructor 
+            * @param {object} $scope - the angular scope object
+            * @param {object} model - the model we are working with. Calls the model's interface functions
+            * @param {string} modelName - the the name we'll be calling our array of objects
+            */
             var MView = function($scope, model, modelName) {
-
-
                 this.$scope = $scope || $rootScope;
                 this.mName = modelName || lodash.uniqueId('model_entities_');
                 this.model = model;
                 this.definition;
-
             };
 
-
+            /*
+            *
+            * Start 
+            *
+            * @description : initiates the pulling of the models
+            * @param {boolean} listen - if set to true, we listen to 
+            * changes from the socket
+            * @param {function} callback - the call back for when the get function is complete
+            *
+            */
             MView.prototype.start = function(listen, callback) {
 
                 var model = this.model,
@@ -554,16 +604,19 @@
 
             };
 
+            /*
+            *  Create 
+            *
+            * @description  Used for creating a new model
+            */
             MView.prototype.create = function() {
-
-                console.log("Creates");
 
                 /*
                  * Here we create from the definitions
                  */
                 var deferred = $q.defer(),
                     self = this,
-                    builder = lodash.bind(build, this);
+                    builder = lodash.bind(_build, this);
                 builder(function(obj) {
                     self.$scope[self.mName].push(obj);
                     return deferred.resolve();
@@ -572,7 +625,12 @@
                 return deferred.promise;
             };
 
-
+            /*
+            * Edit
+            *
+            * @description  Used for editing an existing model
+            * @param {model} the object we are editing
+            */
             MView.prototype.edit = function(model) {
                 var deferred = $q.defer();
 
@@ -585,6 +643,13 @@
 
             };
 
+             /*
+            * Edit
+            *
+            * @description  Used for saving an existing model
+            * @param {model} the object we are saving
+            */
+
             MView.prototype.save = function(model) {
 
                 var deferred = $q.defer();
@@ -593,7 +658,7 @@
                     return;
 
                 // we set our require variable
-                var require = validate.bind(this);
+                var require = _validate.bind(this);
                 // this sets what is required
                 model.editor.required = require(model);
                 // if any are true we return;
@@ -605,7 +670,7 @@
                 if (model.editor.isNew) {
 
                     var saved = angular.copy(model),
-                        index = getIndex(model.id, this.$scope[this.mName]);
+                        index = _getIndex(model.id, this.$scope[this.mName]);
 
                     // now kill it
                     this.$scope[this.mName].splice(index, 1);
@@ -636,16 +701,29 @@
 
             };
 
+             /*
+            * Delete
+            *
+            * @description  Used for deleting an existing model
+            * @param {model} the object we are deleting
+            */
+
             MView.prototype.delete = function(model) {
                 var deferred = $q.defer();
                 this.model.delete(model).then(deferred.resolve, deferred.reject);
                 return deferred.promise;
             };
 
+            /*
+            * Cancel
+            *
+            * @description  Used for canceling object changes
+            * @param {model} the object we are editing
+            */
             MView.prototype.cancel = function(model) {
 
                 var deferred = $q.defer(),
-                    index = getIndex(model.id, this.$scope[this.mName]);
+                    index = _getIndex(model.id, this.$scope[this.mName]);
 
                 if (model.editor.isNew)
                     return this.$scope[this.mName].splice(index, 1);

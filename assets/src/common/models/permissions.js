@@ -5,9 +5,7 @@ angular.module('models.permission', ['lodash'])
 
 
         var Permission = function($scope, modelName) {        	
-        	Model.object.call(this, 'user', modelName, $scope);
-        	//this.strip = ['createdAt', 'updatedAt', 'id', '$$hashKey', 'key'];
-        	//this.$scope = $scope;
+        	Model.object.call(this, 'permission', modelName, $scope);
         };
 
         Permission.prototype = Object.create(Model.object.prototype);
