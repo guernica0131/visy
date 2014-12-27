@@ -17,7 +17,6 @@
             /*
              * Privates
              */
-
             var _init = function(callback) {
 
                 if ($sails.socket.connected)
@@ -29,7 +28,15 @@
                 });
 
             };
-
+            /*
+            * _connect
+            *
+            * @description : generic private function for connecting to the we socket
+            * @param {string} method - get post put delete
+            * @param {string} url - the url we are connecting to
+            * @param {object} params - any parameters we want to include
+            * @return {promise} resolved once we get a valid response from the web server
+            */
             var _connect = function(method, url, params) {
 
                 var deferred = $q.defer();
@@ -741,7 +748,7 @@
 
             };
 
-
+            // we return our object
             return MView
 
 
