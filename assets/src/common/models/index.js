@@ -4,7 +4,8 @@
         // add models here
         'models.role',
         'models.user',
-        'models.permission'
+        'models.permission',
+        //'services.lodash'
 
 
     ])
@@ -29,14 +30,14 @@
 
             };
             /*
-            * _connect
-            *
-            * @description : generic private function for connecting to the we socket
-            * @param {string} method - get post put delete
-            * @param {string} url - the url we are connecting to
-            * @param {object} params - any parameters we want to include
-            * @return {promise} resolved once we get a valid response from the web server
-            */
+             * _connect
+             *
+             * @description : generic private function for connecting to the we socket
+             * @param {string} method - get post put delete
+             * @param {string} url - the url we are connecting to
+             * @param {object} params - any parameters we want to include
+             * @return {promise} resolved once we get a valid response from the web server
+             */
             var _connect = function(method, url, params) {
 
                 var deferred = $q.defer();
@@ -207,7 +208,7 @@
                 return deferred.promise;
             };
 
-             /*
+            /*
              * get
              *
              * @description : gets all or a single instance of a model.
@@ -460,39 +461,41 @@
         }
     ])
 
+
+
     /*
-    * Model Editor
-    * 
-    * @description : ModelEditor manages the insertion of models and their manipulation
-    * 
-    */
+     * Model Editor
+     *
+     * @description : ModelEditor manages the insertion of models and their manipulation
+     *
+     */
 
     .service('ModelEditor', ['lodash', '$q', '$rootScope',
         function(lodash, $q, $rootScope) {
 
             /*
-            * _getIndex
-            *
-            * @description : pulls the index of the selected model based
-            * on the model's id.
-            * @param {integer} id - the id of the model we are attempting to find
-            * @param {array} models - an array of the models we are searching
-            */
+             * _getIndex
+             *
+             * @description : pulls the index of the selected model based
+             * on the model's id.
+             * @param {integer} id - the id of the model we are attempting to find
+             * @param {array} models - an array of the models we are searching
+             */
             var _getIndex = function(id, models) {
                 if (id)
                     return lodash.indexOf(lodash.pluck(models, 'id'), id);
                 else
                     return -1;
             };
-            
+
             /*
-            * _validate
-            *
-            * @description :  this private function ensure that required elements are 
-            * populated before allowing it to be submitted to the server
-            * @TODO :: Expand for other forms of validation
-            * @param {object} model - the model that we are attempting to validate
-            */
+             * _validate
+             *
+             * @description :  this private function ensure that required elements are
+             * populated before allowing it to be submitted to the server
+             * @TODO :: Expand for other forms of validation
+             * @param {object} model - the model that we are attempting to validate
+             */
             var _validate = function(model) {
                 var definition = this.definition;
 
@@ -510,12 +513,12 @@
             };
 
             /*
-            * _buld
-            *
-            * @description : private funtion for building the default parameters based in the 
-            * model description
-            * @param {function} calback - callback for when the form is generated            
-            */
+             * _buld
+             *
+             * @description : private funtion for building the default parameters based in the
+             * model description
+             * @param {function} calback - callback for when the form is generated
+             */
             var _build = function(callback) {
                 var unique = lodash.uniqueId('new_model_'),
                     // more generic from definitions
@@ -567,29 +570,45 @@
             };
 
             /*
-            * MView object
-            * @contsructor 
-            * @param {object} $scope - the angular scope object
-            * @param {object} model - the model we are working with. Calls the model's interface functions
-            * @param {string} modelName - the the name we'll be calling our array of objects
-            */
-            var MView = function($scope, model, modelName) {
+             * MView object
+             * @contsructor
+             * @param {object} $scope - the angular scope object
+             * @param {object} model - the model we are working with. Calls the model's interface functions
+             * @param {string} modelName - the the name we'll be calling our array of objects
+             */
+            var MView = function($scope, model, modelName, autoStart) {
                 this.$scope = $scope || $rootScope;
                 this.mName = modelName || lodash.uniqueId('model_entities_');
                 this.model = model;
                 this.definition;
+
+                 var self = this;
+
+                if (autoStart) {
+
+                    if (self.$scope.ready)
+                    //start();
+                        self.start();
+                    else
+                        self.$scope.$on('ready', function(e, ready) {
+                            if (ready)
+                            // start();
+                                self.start();
+                        });
+
+                }
             };
 
             /*
-            *
-            * Start 
-            *
-            * @description : initiates the pulling of the models
-            * @param {boolean} listen - if set to true, we listen to 
-            * changes from the socket
-            * @param {function} callback - the call back for when the get function is complete
-            *
-            */
+             *
+             * Start
+             *
+             * @description : initiates the pulling of the models
+             * @param {boolean} listen - if set to true, we listen to
+             * changes from the socket
+             * @param {function} callback - the call back for when the get function is complete
+             *
+             */
             MView.prototype.start = function(listen, callback) {
 
                 var model = this.model,
@@ -606,16 +625,25 @@
 
                 model.setPermissions();
 
+                // initialize a count. Likely used for 
+                if (!this.$scope.count)
+                    this.$scope.count = {};
+
+                model.count().then(function(c) {
+                    console.log(c);
+                    self.$scope.count[self.mName] = c.count;
+                });
+
                 model.get().then(callback);
 
 
             };
 
             /*
-            *  Create 
-            *
-            * @description  Used for creating a new model
-            */
+             *  Create
+             *
+             * @description  Used for creating a new model
+             */
             MView.prototype.create = function() {
 
                 /*
@@ -633,11 +661,11 @@
             };
 
             /*
-            * Edit
-            *
-            * @description  Used for editing an existing model
-            * @param {model} the object we are editing
-            */
+             * Edit
+             *
+             * @description  Used for editing an existing model
+             * @param {model} the object we are editing
+             */
             MView.prototype.edit = function(model) {
                 var deferred = $q.defer();
 
@@ -650,12 +678,12 @@
 
             };
 
-             /*
-            * Edit
-            *
-            * @description  Used for saving an existing model
-            * @param {model} the object we are saving
-            */
+            /*
+             * Edit
+             *
+             * @description  Used for saving an existing model
+             * @param {model} the object we are saving
+             */
 
             MView.prototype.save = function(model) {
 
@@ -673,6 +701,9 @@
                     return;
 
                 var self = this;
+
+
+
                 // if we have a new object, we need to do a bit more
                 if (model.editor.isNew) {
 
@@ -685,7 +716,10 @@
                     delete model.id;
                     delete model.editor;
 
-                    this.model.create(model, null, true).then(deferred.resolve, function(why) {
+                    this.model.create(model, null, true).then(function(res) {
+                        ++self.$scope.count[self.mName];
+                        deferred.resolve(res);
+                    }, function(why) {
                         // if we fail we spice the old model back in
                         self.$scope[self.mName].splice(index, 0, saved);
 
@@ -708,25 +742,29 @@
 
             };
 
-             /*
-            * Delete
-            *
-            * @description  Used for deleting an existing model
-            * @param {model} the object we are deleting
-            */
+            /*
+             * Delete
+             *
+             * @description  Used for deleting an existing model
+             * @param {model} the object we are deleting
+             */
 
             MView.prototype.delete = function(model) {
-                var deferred = $q.defer();
-                this.model.delete(model).then(deferred.resolve, deferred.reject);
+                var deferred = $q.defer(),
+                    self = this;
+                this.model.delete(model).then(function(res) {
+                    --self.$scope.count[self.mName];
+                    deferred.resolve(res);
+                }, deferred.reject);
                 return deferred.promise;
             };
 
             /*
-            * Cancel
-            *
-            * @description  Used for canceling object changes
-            * @param {model} the object we are editing
-            */
+             * Cancel
+             *
+             * @description  Used for canceling object changes
+             * @param {model} the object we are editing
+             */
             MView.prototype.cancel = function(model) {
 
                 var deferred = $q.defer(),
@@ -753,7 +791,194 @@
 
 
         }
+    ])
+
+    .service('AssociateModel', ['$state', '$stateParams', '$injector', 'Plural', 'lodash',
+        function($state, $stateParams, $injector, Plural, _) {
+
+            /* 
+             * setSelected
+             * @description :  sets the initial associations that are set
+             * iterates the selected array and sets the defaults to true
+             *
+             */
+
+            var setSelected = function() {
+
+                var ids = _.pluck(this.$scope[this.model][0][this.associations], 'id'),
+                    self = this;
+
+                ids.forEach(function(id) {
+                    self.$scope.isSelected[id] = true
+                });
+
+            };
+
+            var AModel = function($scope, autoStart) {
+
+
+                this.model = Plural($stateParams.model, 1);
+                this.models = Plural($stateParams.model, 5);
+                this.association = Plural($stateParams.association, 1);
+                this.associations = Plural($stateParams.association, 5);
+                this.cModel = _.capitalize(this.model);
+                this.cAssociation = _.capitalize(this.association);
+                this.Model;
+                this.Association;
+                this.$scope = $scope;
+
+                this.$scope.isSelected = {};
+
+                var self = this;
+
+                if (autoStart) {
+
+                    if (self.$scope.ready)
+                    //start();
+                        self.start();
+                    else
+                        self.$scope.$on('ready', function(e, ready) {
+                            if (ready)
+                            // start();
+                                self.start();
+                        });
+
+                }
+
+            };
+
+            /*
+             * start
+             *
+             * @desription : local function for initializing the models once the socket conntects
+             */
+            AModel.prototype.start = function() {
+
+                var self = this;
+
+                // if the injector doesn's have the model, it throws an error
+                try {
+
+                    self.Model = $injector.get(self.cModel + "Model");
+                    self.Association = $injector.get(self.cAssociation + "Model");
+
+                } catch (e) {
+                    return console.error(e); // return with error
+                }
+
+                // set our genertic models
+                var modeled = new self.Model(self.$scope, self.model),
+                    associated = new self.Association(self.$scope, self.associations);
+
+                // pull in the template
+                self.$scope.accTemplate = 'admin/models/' + self.models + '/associations/' + self.associations + '.tpl.html';
+                // we set the objects in the scope for access by child controllers
+                self.$scope.Modeled = modeled;
+                self.$scope.Associated = associated;
+
+
+
+                // we need to assign scroll handlers to this and to the generic other
+                modeled.get($stateParams.id).then(function() {
+                    var selected = setSelected.bind(self);
+                    selected();
+
+                }, console.error);
+                // pulls the first 30 (consider)
+                associated.get(null).then(function(res) {
+                    // now we can descide what to do
+                }, console.error);
+                // initialize a count. Likely used for 
+                if (!self.$scope.count)
+                    self.$scope.count = {};
+
+                associated.count().then(function(c) {
+                    self.$scope.count[self.associations] = c.count;
+                });
+
+                // sets in the this scope the listener for 
+
+                // self.$scope.setAssociation = function(id) {
+
+                //     if (self.$scope.associating || !self.$scope[self.model] || !self.$scope[self.model][0] || !self.$scope[self.model][0][self.associations])
+                //         return;
+
+                //     var assoc = _.pluck(self.$scope[self.model][0][self.associations], 'id'),
+                //         contains = _.contains(assoc, id);
+
+                //     self.$scope.associating = true;
+
+                //     self.$scope.isSelected[id] = !contains;
+                //     if (contains)
+                //         assoc = _.pull(assoc, id);
+                //     else
+                //         assoc.push(id);
+
+                //     //assoc
+                //     var obj = {};
+
+                //     obj[self.associations] = assoc;
+
+
+                //     self.$scope.Modeled.update(self.$scope[self.model][0], obj).then(function(res) {
+                //         self.$scope.associating = false;
+                //     }, function(why) {
+                //         self.$scope.associating = false;
+                //         console.error(why);
+                //     });
+
+
+
+
+
+
+                // };
+
+            };
+
+
+            AModel.prototype.setAssociation = function(id) {
+
+                var self = this;
+
+                if (self.$scope.associating || !self.$scope[self.model] || !self.$scope[self.model][0] || !self.$scope[self.model][0][self.associations])
+                    return;
+
+                var assoc = _.pluck(self.$scope[self.model][0][self.associations], 'id'),
+                    contains = _.contains(assoc, id);
+
+                self.$scope.associating = true;
+
+                self.$scope.isSelected[id] = !contains;
+                if (contains)
+                    assoc = _.pull(assoc, id);
+                else
+                    assoc.push(id);
+
+                //assoc
+                var obj = {};
+
+                obj[self.associations] = assoc;
+
+
+                self.$scope.Modeled.update(self.$scope[self.model][0], obj).then(function(res) {
+                    self.$scope.associating = false;
+                }, function(why) {
+                    self.$scope.associating = false;
+                    console.error(why);
+                });
+
+
+            };
+
+
+
+
+            return AModel;
+        }
+
     ]);
+
 
 
 })();

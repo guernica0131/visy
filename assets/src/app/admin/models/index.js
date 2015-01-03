@@ -56,127 +56,12 @@
 
     ])
 
-    .controller('ModelAssociationController', ['$scope', '$state', '$stateParams', '$injector', 'Plural', 'lodash',
-        function ModelAssociationController($scope, $state, $stateParams, $injector, Plural, _) {
+    .controller('ModelAssociationController', ["$scope", "AssociateModel",
+        function($scope, AssociateModel) {
 
-            var model = Plural($stateParams.model, 1),
-                models = Plural($stateParams.model, 5),
-                association = Plural($stateParams.association, 1),
-                associations = Plural($stateParams.association, 5),
-                cModel = _.capitalize(model),
-                cAssociation = _.capitalize(association),
-                Model,
-                Association;
+            var aModel = new AssociateModel($scope, true);
 
-
-            var start = function() {
-
-                try {
-
-                    Model = $injector.get(cModel + "Model");
-                    Association = $injector.get(cAssociation + "Model");
-
-                } catch (e) {
-                    return console.error(e);
-                }
-
-
-                var modeled = new Model($scope, model),
-                    associated = new Association($scope, associations);
-
-
-                //admin/models/roles/associations/permissions.tpl.html
-                $scope.accTemplate = 'admin/models/' + models + '/associations/' + associations + '.tpl.html';
-
-                $scope.Modeled = modeled;
-                $scope.Associated = associated;
-
-
-                // we need to assign scroll handlers to this and to the generic other
-
-                modeled.get($stateParams.id).then(function() {
-                    // console.log("Assoc controller", $scope.roles);
-                }, console.error);
-                // pulls the first 30 
-                associated.get(null).then(function(res) {
-                    //console.log(res);
-                });
-
-
-                associated.count().then(function(c) {
-                    $scope.count = c.count;
-                });
-
-                $scope.isSelected = function(id) {
-
-                    if (!$scope[model] || !$scope[model][0] || !$scope[model][0][associations])
-                        return $scope.isSelected[id] = false;
-
-                    $scope.isSelected[id] = _.contains(_.pluck($scope[model][0][associations], 'id' ), id)
-
-
-                };
-
-                $scope.setAssociation = function(id) {
-
-                    
-
-
-
-                    if ($scope.associating || !$scope[model] || !$scope[model][0] || !$scope[model][0][associations])
-                        return;
-
-
-
-                    var assoc = _.pluck($scope[model][0][associations], 'id'),
-                        contains = _.contains(assoc, id);
-
-                    
-                    $scope.associating = true;
-
-                    $scope.isSelected[id] = !contains;
-                    if (contains)
-                        assoc = _.pull(assoc, id);
-                    else
-                        assoc.push(id);
-
-                    //assoc
-                    var obj = {};
-
-                    obj[associations] = assoc;
-
-                    
-                    $scope.Modeled.update($scope[model][0], obj).then(function(res) {
-                        $scope.associating = false;
-                    }, function(why) {
-                        $scope.associating = false;
-                        console.error(why);
-                    });
-
-
-                    
-
-
-
-                };
-
-
-
-
-            };
-
-
-            if ($scope.ready)
-                start();
-            else
-                $scope.$on('ready', function(e, ready) {
-                    if (ready)
-                        start();
-                });
-
-
-            $scope.isSelected = {};
-
+            $scope.setAssociation = aModel.setAssociation.bind(aModel);
 
         }
     ])
@@ -196,22 +81,6 @@
 
 
 
-
-
-            // if (!$stateParams.model || !$state.get('models.model.' + $stateParams.model))
-            // //if ($stateParams.model && $state.get('models.model.' + $stateParams.model))
-            //    // $state.go('models.model.' + $stateParams.model , null , {replace:true});
-            //     $state.go('models.index');
-            //else 
-            //  $state.go('models.index');
-
-            // $scope.createModel = function() {
-            //     console.log("hey");
-
-            //     $scope.$broadcast('createModel');
-            // }
-
-
         }
     ])
 
@@ -222,14 +91,11 @@
     .controller('ModelGeneratorController', ['$scope', '$state', '$injector', 'lodash', 'ModelEditor', '$stateParams', 'Plural',
         function($scope, $state, $injector, _, ModelEditor, $stateParams, Plural) {
 
-
+            // @todo :: We should model this as well
             var model = Plural($stateParams.model, 1),
                 models = Plural($stateParams.model, 5),
                 cModel = _.capitalize(model),
                 InjectedModel;
-
-
-
 
             try {
 
@@ -245,7 +111,7 @@
             $scope.modelTemplate = 'admin/models/' + models + '/index.tpl.html';
             //console.log("Model gen controllers", model);
             var Model = new InjectedModel($scope, models)
-            mView = new ModelEditor($scope, Model, models);
+            mView = new ModelEditor($scope, Model, models, true);
 
 
             $scope.Modeled = Model;
@@ -282,17 +148,6 @@
                 name: 'Cancel',
                 action: mView.cancel.bind(mView)
             }];
-            /*
-             * @consider
-             */
-            if ($scope.ready)
-                mView.start(true);
-            else
-                $scope.$on('ready', function(e, ready) {
-                    if (ready)
-                        mView.start(true);
-                });
-
             //$scope.$on('createModel', mView.create.bind(mView));
             $scope.$parent.createModel = mView.create.bind(mView);
 

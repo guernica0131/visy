@@ -6,7 +6,7 @@
 	<main>
 		<ul class="no-bullet">
 			<li>
-				<article  class="checkout panel" ng-class="{selected: isSelected[p.id], busy: associating}" ng-click="setAssociation(p.id)" ng-init="isSelected(p.id)"  ng-repeat="p in permissions |filter:search| filter:{controller: predicate.value}  ">
+				<article  class="checkout panel" ng-class="{selected: isSelected[p.id], busy: associating}" ng-click="setAssociation(p.id)" ng-repeat="p in permissions |filter:search| filter:{controller: predicate.value}">
 					<h3>{{p.name}}</h3>
 					<p>{{p.description}}</p>
 
