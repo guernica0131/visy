@@ -78,5 +78,11 @@
     "karma-requirejs": "^0.2.2",
     "bootswatch": "^3.0.0",
     "should": "^4.0.4"
+  },
+
+   "scripts": {
+    "postinstall": "bower install",
+    "prestart": "npm install",
+    "start": "forever start -w app.js --prod"
   }
 }

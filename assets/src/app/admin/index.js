@@ -85,12 +85,14 @@
         name: 'Permissions',
         model: 'permission',
         route: 'permissions'
-    }, {
-        permit: 'can_find_domain',
-        name: 'Domains',
-        model: 'domain',
-        route: 'domains'
-    }, {
+    },
+    //  { // I a removing because a domain should be done at the site level
+    //     permit: 'can_find_domain',
+    //     name: 'Domains',
+    //     model: 'domain',
+    //     route: 'domains'
+    // }, 
+    {
         permit: 'can_find_portal',
         name: 'Portals',
         model: 'portal',

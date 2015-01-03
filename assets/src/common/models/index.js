@@ -862,6 +862,7 @@
                     self.Model = $injector.get(self.cModel + "Model");
                     self.Association = $injector.get(self.cAssociation + "Model");
 
+
                 } catch (e) {
                     return console.error(e); // return with error
                 }

@@ -15,7 +15,7 @@
             // $urlRouterProvider.when('/admin/models', '/admin/models/');//.when('/admin/models/:/\w/i', '/admin/models/:/\w/i//');
 
             $stateProvider.state('models', {
-                url: '/admin/models',
+                url: '/admin/{domain}/models',
                 controller: ['$scope', '$state', '$stateParams',
                     function($scope, $state, $stateParams) {
                         if ($state.is('models'))
@@ -23,7 +23,22 @@
                     }
                 ],
                 templateUrl: 'admin/models/layout.tpl.html', //'views/service/service.html',
-            }).state('models.index', {
+            })
+            // .state('models.domain', {
+            //     url: '/{domain}/admin/models',
+            //     controller: ['$scope', '$state', '$stateParams',
+            //         function($scope, $state, $stateParams) {
+            //             if ($state.is('models.domain'))
+            //                 $state.go('models.domain.index');
+            //         }
+            //     ],
+            //     templateUrl: 'admin/models/layout.tpl.html', //'views/service/service.html',
+            // })
+            // .state('models.domain.index', {
+            //     //controller: 'ModelIndexController',
+            //     templateUrl: 'admin/models/index.tpl.html'
+            // })
+            .state('models.index', {
                 //controller: 'ModelIndexController',
                 templateUrl: 'admin/models/index.tpl.html'
             }).state('models.model', {
