@@ -5,6 +5,7 @@
         'models.role',
         'models.user',
         'models.permission',
+        'models.domain',
         //'services.lodash'
 
 
@@ -470,8 +471,8 @@
      *
      */
 
-    .service('ModelEditor', ['lodash', '$q', '$rootScope',
-        function(lodash, $q, $rootScope) {
+    .service('ModelEditor', ['lodash', '$q', '$rootScope', '$stateParams',
+        function(lodash, $q, $rootScope, $stateParams) {
 
             /*
              * _getIndex
@@ -557,6 +558,7 @@
                         obj[key] = el.defaultsTo;
 
                 });
+
                 // here we are setting the pivot in edit mode
                 obj.editor = {
                     pivot: 2,
@@ -564,6 +566,14 @@
                     isNew: true
                 };
 
+                var domain = !!(definition['domain'] || definition['domains']);
+
+
+                if (domain)
+                    obj.domain = domain;
+
+
+                // now we generate a domain object.
                 callback(obj);
 
 
@@ -581,6 +591,7 @@
                 this.mName = modelName || lodash.uniqueId('model_entities_');
                 this.model = model;
                 this.definition;
+                this.domain = $stateParams.domain; 
 
                  var self = this;
 
@@ -629,12 +640,12 @@
                 if (!this.$scope.count)
                     this.$scope.count = {};
 
-                model.count().then(function(c) {
+                model.count({domain: self.domain}).then(function(c) {
                     console.log(c);
                     self.$scope.count[self.mName] = c.count;
                 });
 
-                model.get().then(callback);
+                model.get(null, {domain: self.domain}).then(callback);
 
 
             };
@@ -826,6 +837,7 @@
                 this.Model;
                 this.Association;
                 this.$scope = $scope;
+                this.domain = $stateParams.domain;
 
                 this.$scope.isSelected = {};
 
@@ -886,14 +898,14 @@
 
                 }, console.error);
                 // pulls the first 30 (consider)
-                associated.get(null).then(function(res) {
+                associated.get(null, {domain: self.domain}).then(function(res) {
                     // now we can descide what to do
                 }, console.error);
                 // initialize a count. Likely used for 
                 if (!self.$scope.count)
                     self.$scope.count = {};
 
-                associated.count().then(function(c) {
+                associated.count({domain: self.domain}).then(function(c) {
                     self.$scope.count[self.associations] = c.count;
                 });
 

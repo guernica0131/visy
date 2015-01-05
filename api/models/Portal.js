@@ -79,7 +79,7 @@ module.exports = {
                 owner: 1,
                 path: 'guernicasoftworks.com/about',
                 public: false,
-                domains: [1]
+                domains: [2]
             }], cb);
         };
 

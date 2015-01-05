@@ -16,8 +16,17 @@
 
             $stateProvider.state('models', {
                 url: '/admin/{domain}/models',
-                controller: ['$scope', '$state', '$stateParams',
-                    function($scope, $state, $stateParams) {
+                controller: ['$scope', '$state', '$stateParams', 'DomainModel',
+                    function($scope, $state, $stateParams, DomainModel) {
+                        console.log("What is my domain", $stateParams.domain);
+
+                        var domain = new DomainModel($scope, 'domain'),
+                        dId = $stateParams.domain || 1;
+
+                        domain.get(dId).then(function(d) {
+                            console.log(d);
+                        });
+
                         if ($state.is('models'))
                             $state.go('models.index');
                     }
@@ -110,6 +119,7 @@
             var model = Plural($stateParams.model, 1),
                 models = Plural($stateParams.model, 5),
                 cModel = _.capitalize(model),
+                domain = $stateParams.domain,
                 InjectedModel;
 
             try {
