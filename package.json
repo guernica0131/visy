@@ -80,9 +80,5 @@
     "should": "^4.0.4"
   },
 
-   "scripts": {
-    "postinstall": "bower install",
-    "prestart": "npm install",
-    "start": "forever start -w app.js --prod"
-  }
+   
 }
