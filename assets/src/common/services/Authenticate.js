@@ -1,7 +1,7 @@
 /*
  * Our Authticate service manages client-side user authentication
  */
-angular.module('service.Authenticate', ['lodash', 'services', 'ngSails'])
+angular.module('service.authenticate', ['lodash', 'services', 'ngSails'])
 
 .service('Authenticate', ['$q', 'lodash', 'utils', '$sails', 'config', "$rootScope",
     function($q, lodash, utils, $sails, config, $rootScope) {
