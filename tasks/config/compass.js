@@ -18,7 +18,7 @@ module.exports = function(grunt) {
                 importPath: ["assets/bower_components/foundation/scss"],
                 sassDir: 'assets/styles/',
                 cssDir: '.tmp/public/styles/',
-                bundleExec:true,
+               // bundleExec:true, 
                // watch: true,
                 quiet: true
 
