@@ -40,8 +40,8 @@
     * **/
   '/*': function(req, res, next) {
       // res.setLocale(req.param('lang') || sails.config.i18n.defaultLocale);
-      //sails.log("{ROUTES} Setting locale");
-      res.setLocale(sails.config.i18n.defaultLocale);
+      // sails.log("{ROUTES} Setting locale");
+      // res.setLocale(sails.config.i18n.defaultLocale);
       return next();
     },
 
@@ -80,7 +80,10 @@
   *                                                                          *
   ***************************************************************************/
 
-  'get /api/:model/permissions' : 'PermissionController.permissions',
+  //'get /api/:model/permissions' : 'PermissionController.permissions',
+  'get /api/domain/set' : 'SiteController.setDomain',
+
+  'get /api/:model/permissions' : 'SiteController.permissions',
 
   'get /api/:model/define': 'SiteController.define',
 

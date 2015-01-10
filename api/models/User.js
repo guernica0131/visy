@@ -107,46 +107,17 @@ module.exports = {
         } else { // if string
             responses[keys] = true;
         }
-
         // our god-mode user, can always do anything
         if (user && user.id === 1)
             return callback(responses);
 
         var Can = function(user, space, key, more) {
             //this.key = key;
+            console.log("Presetuo", user);
             this.user = user;
             this.space = space;
             this.more = more;
             this.key = key;
-
-            var self = this;
-            this.setup = function() {
-                var sRole;
-
-                if (!self.user)
-                    return self._can('anonymous_user');
-                else {
-                    // here we set a space and ask, whats the role
-                    if (space && space.name != 'root') {
-                        //this._find(sails.models[space.name], this.space); /// LOGICAL ERROR
-                        // // if we can pull from this scope, we proceed
-                        if (sRole = sails.models[space.name + 'role']) //we create the inital case to avoid 
-                            self._pull(sRole, space);
-                        else // otherwise, we need to pull from up the hierarchy
-                            self._find(sails.models[space.name], space);
-                    } else {
-                        // if there is no has no object role, then we default to 
-                        // the site role.
-                        if (this.user.siterole && this.user.siterole.key)
-                            self._can(this.user.siterole.key);
-                        else //otherwise we default to annonymous
-                            self._can('anonymous_user');
-                    }
-
-                }
-
-            };
-            // now we run our method
             this.setup();
 
         };
@@ -191,6 +162,7 @@ module.exports = {
          * We use pull to search for a model and role of the user under a ModelRole model
          */
         Can.prototype._pull = function(Model, space) {
+
             if (!Model) // if we don't have a model, we automatically return the default role
                 return this._can(this.user.siterole.key);
 
@@ -266,28 +238,30 @@ module.exports = {
 
         Can.prototype.setup = function(key, more) {
 
-            this.key = key;
-            this.more = more;
+            var self = this;
 
-            var sRole;
-
-            if (!this.user)
-                return this._can('anonymous_user');
+            if (!self.user)
+                return self._can('anonymous_user');
             else {
                 // here we set a space and ask, whats the role
                 if (space && space.name != 'root') {
-                    // if we can pull from this scope, we proceed
+                    //this._find(sails.models[space.name], this.space); /// LOGICAL ERROR
+                    // // if we can pull from this scope, we proceed
                     if (sRole = sails.models[space.name + 'role']) //we create the inital case to avoid 
-                        this._pull(sRole, space);
+                        self._pull(sRole, space);
                     else // otherwise, we need to pull from up the hierarchy
-                        this._find(sails.models[space.name], space);
+                        self._find(sails.models[space.name], space);
                 } else {
                     // if there is no has no object role, then we default to 
                     // the site role.
-                    this._can(this.user.siterole.key);
+                    if (this.user.siterole && this.user.siterole.key)
+                        self._can(this.user.siterole.key);
+                    else //otherwise we default to annonymous
+                        self._can('anonymous_user');
                 }
 
             }
+
 
         };
 

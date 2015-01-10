@@ -30,9 +30,11 @@ module.exports = {
             model: 'user'
         },
 
-        path: {
-            type: 'string',
-            unique: true
+        hosts: {
+            collection: 'host',
+            via: 'domain'
+            //type: 'string',
+            //unique: true
         },
 
         meta: {
@@ -62,6 +64,10 @@ module.exports = {
             dominant: true
         },
 
+        view: {
+            type: 'json'
+        },
+
         tags: {
             collection: 'tag',
             via: 'domains',
@@ -70,25 +76,111 @@ module.exports = {
 
     },
 
+    establish: function(host, callback) {
+        // we pull pull from the host model to find our domain
+        Host.findOneByPath(host).populate('domain').exec(callback);
+    },
+
     seeds: function(cb) {
         var plant = function(cb) {
 
+            /*
+
+
+    name: {
+        type: 'string'
+    },
+
+    path: {
+        type: 'string'
+    },
+
+    owner: {
+        model: 'user'
+    },  
+
+    domain: {
+        model: 'domain'
+    }
+
+
+            */
+
 
             Domain.create(
-               [ {
-                    name: 'visy',
-                    key: 'root',
-                    owner: 1,
-                    path: 'visy.com',
-                    public: false
-                }, {
-                    name: 'guernica Softworks',
-                    key: 'gSoft',
-                    owner: 1,
-                    path: 'guernicasoftworks.com',
-                    public: false
-                }
-            ], cb);
+                [
+
+                // {
+                //         name: 'visy',
+                //         key: 'root',
+                //         owner: 1,
+                //         hosts: [{
+                //             path: 'localhost',
+                //             name: 'LocalHost',
+                //             owner: 1
+                //         }, {
+                //             path: 'visy.com',
+                //             name: 'Visy',
+                //             owner: 1
+                //         }],
+                //         public: false
+                //     }, 
+
+                    {
+                        name: 'guernica Softworks',
+                        key: 'gSoft',
+                        owner: 1,
+                        hosts: [{
+                            path: 'guernicasoftworks.com',
+                            name: 'guernica Softworsks',
+                            owner: 1
+                        }, {
+                            path: 'gsoft',
+                            name: 'guernica Softworsks Local',
+                            owner: 1
+                        }],
+                        public: false
+                    },
+
+                    {
+                        name: 'Fake 1',
+                        key: 'fake1',
+                        owner: 1,
+                        hosts: [{
+                            path: 'fake.com',
+                            name: 'Fake 1',
+                            owner: 1
+                        }],
+                        public: false
+                    },
+
+                    {
+                        name: 'Fake 2',
+                        key: 'fake2',
+                        owner: 1,
+                        hosts: [{
+                            path: 'fake2.com',
+                            name: 'Fake 2',
+                            owner: 1
+                        }],
+                        public: false
+                    },
+
+                    {
+                        name: 'Fake 3',
+                        key: 'fake3',
+                        owner: 1,
+                        hosts: [{
+                            path: 'fake3.com',
+                            name: 'Fake 3',
+                            owner: 1
+                        }],
+                        public: false
+                    }
+
+
+
+                ], cb);
         }
         return {
             seed: true,

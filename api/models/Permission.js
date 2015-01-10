@@ -205,6 +205,24 @@ module.exports = {
                             action: 'populate',
                             key: 'can_populate_' + as + "_from_" + model,
                             perishable: false
+                        },
+
+                         {
+                            name: "Remove own " + model + " " + as,
+                            description: 'Allows permission for removing' + ((type === 'model') ? ((vowel) ? ' an ' : ' a ') : ' ') + as + ' from' + ((modelVowel) ? ' an ' : ' a ') + model + ' a user owns.',
+                            controller: model,
+                            action: 'remove',
+                            key: 'can_remove_' + as + "_from_own_" + model,
+                            perishable: false
+                        },
+
+                        {
+                            name: "View own " + model + " " + as,
+                            description: 'Allows permission for viewing ' + ((type === 'model') ? ((vowel) ? ' an ' : ' a ') : ' ') + as + ' of' + ((modelVowel) ? ' an ' : ' a ') + model + ' a user owns.',
+                            controller: model,
+                            action: 'populate',
+                            key: 'can_populate_' + as + "_from_own_" + model,
+                            perishable: false
                         }
 
 

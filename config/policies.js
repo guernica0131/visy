@@ -28,12 +28,30 @@ module.exports.policies = {
 
   // '*': true,
 
-  '*': true,
+  //'*': true,
 
   // we are saying this size is localized be default.  Comment out otherwise.
-  '*':  'localize',
+  // '*':  'localize',
 
-  '*': [ 'passport' , 'permitted']
+  '*': [true, 'domain' ,'passport' , 'permitted'],
+
+  'AuthController': {
+    '*': ['passport']
+  },
+
+  'SiteController': {
+    '*': ['passport']
+  },
+
+  'DomainController': {
+    '*': [ 'domain', 'passport','permitted', 'objectFilter']
+  },
+
+
+
+  'PortalController': {
+    '*': ['domain', 'passport','permitted', 'objectFilter']
+  }
 
   /***************************************************************************
   *                                                                          *

@@ -36,55 +36,122 @@
         }
     ])
 
+    .service('Visy', ['$rootScope', '$http', '$q', 'CAN', 'Authenticate', 'utils',
+        function($rootScope, $http, $q, CAN, Authenticate, utils) {
 
-    .controller('AppCtrl', ['$scope', '$window', "Authenticate", 'config', 'CAN', '$log' ,
-        function AppCtrl($scope, $window, Authenticate, config, CAN, $log) {
+
+            var Visy = function(params) {
+                this.permits = [];
+                this.all = CAN().all;
+            };
+
+            Visy.prototype.init = function() {
+                var deferred = $q.defer();
+
+                $rootScope.ready = false;
+                $rootScope.basePermits = {};
+
+                $rootScope.permits = {};
+
+                $rootScope.$broadcast('ready', false);
+
+                var self = this;
+
+                $rootScope.adminOptions = this.all;
+
+                self.all.forEach(function(can, i) {
+                    self.permits.push(can.permit);
+                });
+
+                var authenticate = function(domain) {
+
+                    // we may need the domain parameter at some point
+                    self.setAuthenticate(function(err, res) {
+
+                        if (err) {
+                            $rootScope.basePermits = {};
+                            $rootScope.permits = {};
+
+                            return deferred.resolve(err);
+                        }
+
+                        $rootScope.basePermits = res;
+                        $rootScope.ready = true;
+                        $rootScope.$broadcast('ready', true);
+
+                        deferred.resolve();
+                    });
+
+                };
+
+                self.setDomain().then(function(domain) {
+                    console.log(domain);
+                    authenticate(domain);
+                }, function(why) {
+                    console.error(why);
+                });
+
+
+
+                return deferred.promise;
+
+            };
+
+            Visy.prototype.setAuthenticate = function(callback) {
+
+                var self = this;
+
+                new Authenticate.User(true, function(user, space) {
+                    // for permission testing
+                    var user = new Authenticate.User();
+                    //console.log("User auth boostrap", user.get('user'));
+                    if (user.get('user') && user.get('user').id)
+                        user.can(self.permits).then(function(res) {
+                            callback(null, res);
+                        }, function(why) {
+                            callback(why);
+                        });
+                    else {
+                        callback('User is unauthenticated.');
+                    }
+
+                });
+
+            };
+
+            Visy.prototype.setDomain = function() {
+                var deferred = $q.defer(),
+                    url = utils.prepareUrl('domain') + '/set';
+
+
+                $http.get(url, {
+                    establish: true
+                })
+                    .success(deferred.resolve)
+                    .error(deferred.reject);
+
+                return deferred.promise;
+
+            };
+
+
+            return Visy;
+
+        }
+    ])
+
+
+    .controller('AppCtrl', ['$scope', '$log', 'Visy', 'config',
+        function AppCtrl($scope, $log, Visy, config) {
+
 
             $scope.brand = config.brand;
-            $scope.adminOptions = CAN().all;
-
+            // used for template debugging
             $scope.$log = $log.log;
 
-            $scope.findPermits = {};
+            var visy = new Visy();
 
-            $scope.permits = {};
-
-
-            $scope.ready = false;
-            $scope.$broadcast('ready', false);
-
-            var permits = [];
-
-
-            CAN().all.forEach(function(can, i) {
-                permits.push(can.permit);
-            });
-
-            // we set the authenticated user
-            new Authenticate.User(true, function(user, space) {
-                // for permission testing
-                var user = new Authenticate.User();
-                //console.log("User auth boostrap", user.get('user'));
-                if (user.get('user') && user.get('user').id)
-                    user.can(permits).then(function(res) {
-                        //console.log("My respinse" , res);
-                        $scope.findPermits = res;
-                        $scope.ready = true;
-                        $scope.$broadcast('ready', true);
-
-                    }, function(why) {
-                        $scope.findPermits = {};
-                        $scope.permits = {};
-                        console.error(why);
-                    });
-                else {
-                    $scope.permits = {};
-                    $scope.findPermits = {};
-                }
-
-
-
-            });
+            visy.init();
 
 
         }

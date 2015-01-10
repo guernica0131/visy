@@ -11,20 +11,36 @@ module.exports = {
      * @param {object} request
      * @return {Array} the array of permissions for the controller action
      */
-    build: function(request) {
+    build: function(request, attributes) {
+
+        var action = request.action;
+
+        action = action.replace('One', '');
 
         /*
         * Remove and popluate for associations
         */
-        if (request.action === 'populate' || request.action === 'remove' ) {
-            return 'can_' + request.action + '_' + request.alias + '_from_' + request.controller;
+        if (action === 'populate' || action === 'remove' ) {
+            //return 'can_' + request.action + '_' + request.alias + '_from_' + request.controller;
+            var cans = ['can_' + action + '_' + request.alias + '_from_' + request.controller];
+
+            if (attributes['owner'] || attributes['creator'])
+                cans.push('can_' + action + '_' + request.alias + '_from_own_' + request.controller);
+
+            return cans;
         }
         // make sure these are actual permisison
         // Permission.findByKey(keys).populate('roles').then(function(permissions) {
         //     return permissions;  
         // });
-        return 'can_' + request.action + '_' + request.controller;
-        //return ['can_' + request.action + '_' + request.controller, 'can_' + request.action + '_own_' + request.controller];
+        //return 'can_' + request.action + '_' + request.controller;
+        var cans = ['can_' + action + '_' + request.controller];
+
+        if (attributes['owner'] || attributes['creator'])
+            cans.push('can_' + action + '_own_' + request.controller);
+
+        return cans;
+
     },
 
     /*
@@ -37,7 +53,7 @@ module.exports = {
     resolve: function(req, res, next) {
         // we see of there is a pace in session, if not we default
         // it to the root space
-        if (!req.session.space)
+        if (!req.session.space) // @TODO::: DEFINE HERE
             req.session.space = {
                 name: 'root', // 'collection' testing
                 //id: 1 // testing
@@ -48,16 +64,20 @@ module.exports = {
         // if the model isn't permissible return next();
         if (!model || (model.is && !model.is.permissible))
             return next();
-        
+
         var user = req.user,
-            key = this.build(options);
+            keys = this.build(options, model._attributes);
+
+            console.log(keys);
         // once we have our key bult we ask if the user can? perform the key  
-        User.can(user, key, req.session.space, function(can) {
+        User.can(user, keys, req.session.space, function(can) {
             sails.log("Can I ?????", can);
         
-            if (!can[key]) // the we don't hav that permission for the space role we return and reject
+            if (!_.some(can)) // the we don't hav that permission for the space role we return and reject
                 return res.forbidden("Your role lacks the required permissions for this action");
             // now we descide what we need to do with that he/she can can't do
+            res.locals.can = can;
+
             next();
         });
 
