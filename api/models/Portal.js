@@ -23,7 +23,7 @@ module.exports = {
             type: 'string'
         },
 
-        owner: {
+        creator: {
             model: 'user'
         },
 
@@ -80,7 +80,7 @@ module.exports = {
             Portal.create([{
                     name: 'About',
                     key: 'gsoft-about',
-                    owner: 1,
+                    creator: 1,
                     path: 'guernicasoftworks.com/about',
                     public: false,
                     domains: [2]
@@ -88,7 +88,7 @@ module.exports = {
                 {
                     name: 'guernica Softworks',
                     key: 'gSoft',
-                    owner: 1,
+                    creator: 1,
                     path: 'guernicasoftworks.com',
                     public: false,
                     domains: [2, 3]
@@ -97,7 +97,7 @@ module.exports = {
                 {
                     name: 'Fake 1',
                     key: 'fake1',
-                    owner: 1,
+                    creator: 1,
                     path: 'fake.com',
                     public: false,
                     domains: [1, 4]
@@ -106,7 +106,7 @@ module.exports = {
                 {
                     name: 'Fake 2',
                     key: 'fake2',
-                    owner: 1,
+                    creator: 1,
                     path: 'fake2.com',
                     public: false,
                     domains: [5]
@@ -115,7 +115,7 @@ module.exports = {
                 {
                     name: 'Fake 3',
                     key: 'fake3',
-                    owner: 1,
+                    creator: 2,
                     path: 'fake3.com',
                     public: false,
                     domains: [2, 3, 4, 5]

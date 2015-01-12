@@ -41,7 +41,7 @@ module.exports = {
   		via: 'categories'
   	},
 
-    owner: {
+    creator: {
       model: 'user'
     }
 

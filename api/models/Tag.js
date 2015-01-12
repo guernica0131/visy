@@ -41,7 +41,7 @@ module.exports = {
   		via: 'tags'
   	},
 
-    owner: {
+    creator: {
       model: 'user'
     }
 

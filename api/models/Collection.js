@@ -22,7 +22,7 @@ module.exports = {
             type: 'string'
         },
 
-        owner: {
+        creator: {
             model: 'user'
         },
         // @TODO:: consider making a set of modles the define/describe the 

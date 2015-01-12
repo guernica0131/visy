@@ -5,27 +5,20 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var blueprintFind = require("../../node_modules/sails/lib/hooks/blueprints/actions/find");
+
 
 module.exports = {
 
+	// we will need to override these controller actions
+    find: function(req, res, next) {
+    	permissions.controllers.domain.find(req, res);
+    },
+
+    // we will need to override these controller actions
+    findOne: function(req, res) {
+    	permissions.controllers.domain.find(req, res);
+    }	
 
 
-	find: function(req, res, next) {
-		//console.log("THIS IS WORKING", blueprintFind);
-		//return res.send("Fuck");
-		//next();
 
-		//req.params.all()['where'] = {id: [1,3] };
-
-		// we need the domain
-
-
-
-		return blueprintFind(req, res, next);
-	}
-	
-	
-	
 };
-

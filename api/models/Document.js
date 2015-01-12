@@ -17,7 +17,7 @@ module.exports = {
             type: 'string'
         },
 
-        owner: {
+        creator: {
             model: 'user'
         },
 

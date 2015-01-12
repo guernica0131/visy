@@ -26,7 +26,7 @@ module.exports = {
             unique: true
         },
 
-        owner: {
+        creator: {
             model: 'user'
         },
 
@@ -129,15 +129,15 @@ module.exports = {
                     {
                         name: 'guernica Softworks',
                         key: 'gSoft',
-                        owner: 1,
+                        creator: 1,
                         hosts: [{
                             path: 'guernicasoftworks.com',
                             name: 'guernica Softworsks',
-                            owner: 1
+                            creator: 1
                         }, {
                             path: 'gsoft',
                             name: 'guernica Softworsks Local',
-                            owner: 1
+                            creator: 1
                         }],
                         public: false
                     },
@@ -145,11 +145,10 @@ module.exports = {
                     {
                         name: 'Fake 1',
                         key: 'fake1',
-                        owner: 1,
+                        creator: 1,
                         hosts: [{
                             path: 'fake.com',
-                            name: 'Fake 1',
-                            owner: 1
+                            name: 'Fake 1'
                         }],
                         public: false
                     },
@@ -157,11 +156,10 @@ module.exports = {
                     {
                         name: 'Fake 2',
                         key: 'fake2',
-                        owner: 1,
+                        creator: 2,
                         hosts: [{
                             path: 'fake2.com',
-                            name: 'Fake 2',
-                            owner: 1
+                            name: 'Fake 2'
                         }],
                         public: false
                     },
@@ -169,11 +167,10 @@ module.exports = {
                     {
                         name: 'Fake 3',
                         key: 'fake3',
-                        owner: 1,
+                        creator: 2,
                         hosts: [{
                             path: 'fake3.com',
-                            name: 'Fake 3',
-                            owner: 1
+                            name: 'Fake 3'
                         }],
                         public: false
                     }

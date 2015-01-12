@@ -18,9 +18,6 @@ module.exports = {
   		type: 'string'
   	},
 
-  	owner: {
-  		model: 'user'
-  	},	
 
   	domain: {
   		model: 'domain'
