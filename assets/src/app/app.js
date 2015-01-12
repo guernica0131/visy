@@ -162,11 +162,15 @@
         }
     ])
 
-
+    /*
+    * AppCtrl
+    *
+    * The entry controller for the application scope
+    */
     .controller('AppCtrl', ['$scope', '$log', 'Visy', 'config',
         function AppCtrl($scope, $log, Visy, config) {
-
-
+            // this is dynamic and could be pulled from 
+            // domain specific data. @TODO:: Consider
             $scope.brand = config.brand;
             // used for template debugging
             $scope.$log = $log.log;
@@ -179,4 +183,4 @@
         }
     ]);
 
-})();
+}());
