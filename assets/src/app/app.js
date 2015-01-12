@@ -39,30 +39,39 @@
     .service('Visy', ['$rootScope', '$http', '$q', 'CAN', 'Authenticate', 'utils',
         function($rootScope, $http, $q, CAN, Authenticate, utils) {
 
-
+            /*
+            * Our constructor for our visy object
+            */
             var Visy = function(params) {
                 this.permits = [];
                 this.all = CAN().all;
             };
 
+            /*
+            * init 
+            * @description: used to bring in the user, domain, and
+            * access control. 
+            * @return {Promise} 
+            */
             Visy.prototype.init = function() {
                 var deferred = $q.defer();
 
                 $rootScope.ready = false;
-                $rootScope.basePermits = {};
-
-                $rootScope.permits = {};
-
                 $rootScope.$broadcast('ready', false);
+
+                $rootScope.basePermits = {}; // @TDOD:: need to consider if this is needed in later versions
+                $rootScope.permits = {}; 
 
                 var self = this;
 
-                $rootScope.adminOptions = this.all;
+                $rootScope.adminOptions = this.all; // @TODO:: Simply
 
+                // we are going to ask the api if the user has permission
+                // to access these following permits
                 self.all.forEach(function(can, i) {
                     self.permits.push(can.permit);
                 });
-
+                // @TODO:: consider
                 var authenticate = function(domain) {
 
                     // we may need the domain parameter at some point
@@ -78,7 +87,6 @@
                         $rootScope.basePermits = res;
                         $rootScope.ready = true;
                         $rootScope.$broadcast('ready', true);
-
                         deferred.resolve();
                     });
 
@@ -97,6 +105,13 @@
 
             };
 
+            /*
+            * setAuthenticate
+            *
+            * @description : pulls the authentication data
+            * @param {function} callback - calls back when complete
+            * @todo ::: consider as a promise
+            */
             Visy.prototype.setAuthenticate = function(callback) {
 
                 var self = this;
@@ -119,6 +134,13 @@
 
             };
 
+            /*
+            * setDomain
+            *
+            * @description : pulls domain data from the api
+            * @param {function} callback - calls back when complete
+            * @todo ::: will need considerable testing
+            */
             Visy.prototype.setDomain = function() {
                 var deferred = $q.defer(),
                     url = utils.prepareUrl('domain') + '/set';
