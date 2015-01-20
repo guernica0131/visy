@@ -17,7 +17,12 @@ module.exports = {
     // we will need to override these controller actions
     findOne: function(req, res) {
     	permissions.controllers.domain.find(req, res);
-    }	
+    },
+
+    /*
+    * TODO::: NEED A MECHANISM FOR CREATE WHERE THE USER CAN 
+    * HAVE A TEMP TOKEN FOR PURCHASING DOMAINS
+    */	
 
 
 

@@ -9,6 +9,8 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 
+var Q = require('q');
+
 module.exports.bootstrap = function(cb) {
 
     // It's very important to trigger this callback method when you are finished
@@ -17,36 +19,94 @@ module.exports.bootstrap = function(cb) {
     async.series([
 
         function(cb) {
+
             var params = sails.config._;
             // if we pass a seed parameter to the cli it will generate the default models
             if (sails.config.seed || _.contains(params, 'seed')) {
-                var callback = function(err, model) {
-                    if (err) sails.log.error(err);
-                    sails.log(model);
+
+                var Seed = function() {
+                    this.associations = [];
                 };
-                var associations = [];
-                // we iterate through the models 
-                Object.keys(sails.models).forEach(function(key) {
-                    var model = sails.models[key];
-                    // if we have a seed function, we ensure it is defined and we can run it
-                    if (model.seeds && model.seeds().seed) {
-                        seed = model.seeds();
-                        // if the seed parameter is truthy, we plant the seed.
-                        if (seed.plant && _.isFunction(seed.plant))
-                            seed.plant(callback);
 
-                        if (seed.associate && _.isFunction(seed.associate))
-                            associations.push(seed.associate);
-                    }
+                Seed.prototype.displayCallback = function(err, model) {
+                    if (err) sails.log.error(err);
+                     sails.log(model);
+                };
 
-                });
-                // associations is used for any associations we might make once
-                // all of the base models have been established
-                associations.forEach(function(associate) {
-                    associate(callback);
-                });
+                Seed.prototype.init = function(callback) {
+                    sails.config.bootstrap.seeding = true;
+                    var me = this,
+                        error = function(err) {
+                            sails.log.error(err);
+                            sails.config.bootstrap.seeding = false;
+                            callback();
+                        };
 
-                cb();
+                    me.plant().then(function() {
+                        me.associate().then(function() {
+                            // potential security risk. Do not seed while taking traffic
+                            setTimeout(function() {
+                                sails.config.bootstrap.seeding = false;
+                            }, 2000);
+                            
+                            callback();
+                        }, error);
+                    }, error);
+
+                };
+
+                Seed.prototype.plant = function() {
+
+                    var deferred = Q.defer(),
+                        me = this;
+
+                    async.forEach(Object.keys(sails.models), function(key, callback) {
+                        var model = sails.models[key];
+                        // if we have a seed
+                        // function, we ensure it is defined and we can run it
+                        if (model.seeds && model.seeds().seed) {
+                            seed = model.seeds();
+                            // if the seed parameter is truthy, we plant the seed.
+                            if (seed.plant && _.isFunction(seed.plant))
+                                seed.plant(me.displayCallback);
+
+                            if (seed.associate && _.isFunction(seed.associate))
+                                me.associations.push(seed.associate);
+                        }
+
+                        callback();
+                    }, function(err) {
+                        if (err) return deferred.reject(err);
+
+                        deferred.resolve();
+                    })
+
+                    return deferred.promise;
+
+                };
+
+                Seed.prototype.associate = function() {
+
+                    var deferred = Q.defer(),
+                        me = this;
+
+                    async.forEach(me.associations, function(associate, callback) {
+                        //console.log("Associate", associate);
+                        associate(me.displayCallback)
+                        callback();
+                    }, function(err) {
+                        if (err) return deferred.reject(err);
+                        deferred.resolve();
+                    });
+
+                    return deferred.promise;
+
+                };
+
+                var seed = new Seed();
+
+                seed.init(cb);
+
             } else
             // might need to callback else where
                 cb();
@@ -62,12 +122,12 @@ module.exports.bootstrap = function(cb) {
                 methods = ['login', 'logIn', 'logout', 'logOut', 'isAuthenticated', 'isUnauthenticated'];
 
             sails.removeAllListeners('router:request');
-           
+
             sails.on('router:request', function(req, res) {
                 initialize(req, res, function() {
                     session(req, res, function(err) {
                         if (err) {
-                            return  sails.log.error(err);//res.serverError(err);
+                            return sails.log.error(err); //res.serverError(err);
                         }
                         for (var i = 0; i < methods.length; i++) {
                             req[methods[i]] = http.IncomingMessage.prototype[methods[i]].bind(req);

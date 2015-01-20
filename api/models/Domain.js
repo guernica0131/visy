@@ -173,6 +173,17 @@ module.exports = {
                             name: 'Fake 3'
                         }],
                         public: false
+                    },
+
+                     {
+                        name: 'Fake 4',
+                        key: 'fake4',
+                        creator: 2,
+                        hosts: [{
+                            path: 'fake4.com',
+                            name: 'Fake 4'
+                        }],
+                        public: false
                     }
 
 

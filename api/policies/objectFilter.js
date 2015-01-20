@@ -9,7 +9,7 @@ module.exports = function(req, res, next) {
 	*/
 
 
- console.log("Filtering", res.locals.can );
+ 	//console.log("Filtering", res.locals.can );
 
 	 ///req.params.all()['id'] = '3';
 	// //req.param('id') = '1';
