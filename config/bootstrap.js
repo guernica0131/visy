@@ -17,48 +17,70 @@ module.exports.bootstrap = function(cb) {
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
     async.series([
-
+        /*
+         * Our first function manages application seeding
+         * if there is a seed parameter as we lift, find the models with
+         * seed objects and are active.
+         */
         function(cb) {
 
             var params = sails.config._;
             // if we pass a seed parameter to the cli it will generate the default models
             if (sails.config.seed || _.contains(params, 'seed')) {
-
+                /*
+                 * The seed object manages our seeding process.
+                 */
                 var Seed = function() {
                     this.associations = [];
                 };
-
+                /*
+                 * Common callback for displaying our the creation of models
+                 *
+                 * @param {Object} err : the error object
+                 * @param {Object} model : the newly created object
+                 */
                 Seed.prototype.displayCallback = function(err, model) {
                     if (err) sails.log.error(err);
-                     sails.log(model);
+                    sails.log(model);
                 };
 
+                /*
+                 * Init is used to run the seeding process
+                 *
+                 * @param {Function} callback
+                 */
                 Seed.prototype.init = function(callback) {
                     sails.config.bootstrap.seeding = true;
-                    var me = this,
+                    var self = this,
                         error = function(err) {
                             sails.log.error(err);
                             sails.config.bootstrap.seeding = false;
                             callback();
                         };
 
-                    me.plant().then(function() {
-                        me.associate().then(function() {
+                    self.plant().then(function() {
+                        self.associate().then(function() {
                             // potential security risk. Do not seed while taking traffic
                             setTimeout(function() {
                                 sails.config.bootstrap.seeding = false;
                             }, 2000);
-                            
-                            callback();
+
+                            if (_.isFunction(callback))
+                                callback();
+
                         }, error);
                     }, error);
 
                 };
-
+                /*
+                 * Plants the seeds for model generation
+                 *
+                 * @return {promise}
+                 */
                 Seed.prototype.plant = function() {
 
                     var deferred = Q.defer(),
-                        me = this;
+                        self = this;
 
                     async.forEach(Object.keys(sails.models), function(key, callback) {
                         var model = sails.models[key];
@@ -68,10 +90,10 @@ module.exports.bootstrap = function(cb) {
                             seed = model.seeds();
                             // if the seed parameter is truthy, we plant the seed.
                             if (seed.plant && _.isFunction(seed.plant))
-                                seed.plant(me.displayCallback);
+                                seed.plant(self.displayCallback);
 
                             if (seed.associate && _.isFunction(seed.associate))
-                                me.associations.push(seed.associate);
+                                self.associations.push(seed.associate);
                         }
 
                         callback();
@@ -85,14 +107,18 @@ module.exports.bootstrap = function(cb) {
 
                 };
 
+                /*
+                 * The associate function is called once the inital planting
+                 * takes place. This allow for us to create any dependent associations
+                 */
                 Seed.prototype.associate = function() {
 
                     var deferred = Q.defer(),
-                        me = this;
+                        self = this;
 
-                    async.forEach(me.associations, function(associate, callback) {
-                        //console.log("Associate", associate);
-                        associate(me.displayCallback)
+                    async.forEach(self.associations, function(associate, callback) {
+                        // the array contains the associate functions present in the models
+                        associate(self.displayCallback)
                         callback();
                     }, function(err) {
                         if (err) return deferred.reject(err);
@@ -108,12 +134,16 @@ module.exports.bootstrap = function(cb) {
                 seed.init(cb);
 
             } else
-            // might need to callback else where
+                // need seed request so callback
                 cb();
 
         },
 
-
+        /*
+         * This hack ensure that passport functions with websockets
+         *
+         * @see http://stackoverflow.com/questions/17365444/sails-js-passport-js-authentication-through-websockets#comment31049298_18343226
+         */
         function(cb) {
             var passport = require('passport'),
                 initialize = passport.initialize(),
@@ -142,24 +172,6 @@ module.exports.bootstrap = function(cb) {
         function(cb) {
             Permission.buildPermissions(cb);
         },
-
-        // function(cb) {
-        //     //console.log(sails.config.routes);
-        //     var getPrefix = function() {
-        //         return sails.config.blueprints.prefix;
-        //     };
-
-
-        //     var setRouteKey = function(routes, method, route, controller) {
-        //         routes[method + " " + getPrefix() + route] = controller;
-        //     };
-
-        //     //setRouteKey(sails.config.routes, 'get', '/:model/permissions' ,'PermissionController.permissions');
-
-        //     //console.log(sails.config.routes);
-
-        //     cb();
-        // }
 
 
     ], function() {
