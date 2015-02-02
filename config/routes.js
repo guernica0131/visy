@@ -56,9 +56,9 @@
 
 
 
-  'GET /login': 'AuthController.li',
-  'GET /logout': 'AuthController.lo',
-  'GET /register': 'AuthController.register',
+  'get /login': 'AuthController.li',
+  'get /logout': 'AuthController.lo',
+  'get /register': 'AuthController.register',
 
   //'GET /' + sails.config.blueprints.prefix + '/auth/user': 'AuthController.user',
 
@@ -67,6 +67,9 @@
 
   'get /auth/:provider': 'AuthController.provider',
   'get /auth/:provider/callback': 'AuthController.callback',
+
+
+
 
 
 
@@ -80,14 +83,19 @@
   *                                                                          *
   ***************************************************************************/
 
-  //'get /api/:model/permissions' : 'PermissionController.permissions',
+  // site routes
   'get /api/domain/set' : 'SiteController.setDomain',
-
   'get /api/:model/permissions' : 'SiteController.permissions',
-
   'get /api/:model/define': 'SiteController.define',
-
   'get /api/:model/count': 'SiteController.count',
+
+  // the following simplifies routing for domainRules
+  'get /api/domain/:domain/rule/:role?': {model: 'domainrule',  blueprint: 'find'},
+  'post /api/domain/:domain/rule/:role': {model: 'domainrule',  blueprint: 'create'},
+  '/api/domain/:domain/rule/:role/permissions/:permission': {model: 'domainrule',  controller: 'DomainRule', action: 'populate'},
+  //'put /api/domain/:domain/rule/:role/permissions/:permission': {model: 'domainrule',  controller: 'DomainRule', action: 'populate'},
+  //'delete /api/domain/:domain/rule/:role/permissions/:permission': {model: 'domainrule',  controller: 'DomainRule', action: 'depopulate'}
+
 };
 
 

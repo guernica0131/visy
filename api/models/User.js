@@ -84,7 +84,7 @@ module.exports = {
      * We first seek role within the current space. If that isn't found, we cascade
      * up to the parent space (if found) and attempt to find the role there. This continues
      * until either a role is found or we land at the root. In which case, we pull siterole
-     * This function will need tons of testing once we have everything im place.
+     * This function will need tons of testing once we have everything in place.
      * For now we will ignore spaces space = {name: 'domain', id: 1}
      * @param {object} user - the user object in session
      * @param {string|array} keys - a single permission or an array of permissions we want to validate
@@ -113,7 +113,6 @@ module.exports = {
 
         var Can = function(user, space, key, more) {
             //this.key = key;
-            console.log("Presetuo", user);
             this.user = user;
             this.space = space;
             this.more = more;
@@ -132,7 +131,7 @@ module.exports = {
 
         };
         /*
-         * The trick is in fiding the appropriate role
+         * The trick is in finding the appropriate role
          * based on the current space
          * @param {string} current_key - the string of the role key
          * @return {callback} - if the role can or cannot perform the task
@@ -185,7 +184,7 @@ module.exports = {
         };
 
         /*
-         * We use find to find the parent model and it's accociated ID
+         * We use find to find the parent model and it's associated ID
          */
         Can.prototype._find = function(Model, space) {
 

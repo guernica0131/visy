@@ -65,10 +65,19 @@ module.exports = {
                     DomainRule.create(elements, cb);
 
             });
+
+             DomainRule.create([ {
+                domain: 2,
+                role: 3
+             },{
+                domain: 2,
+                role: 5
+             }], cb)
+
         }
 
         var plant = function(cb) {
-            cb();
+             cb();
         };
 
         return {

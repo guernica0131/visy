@@ -7,8 +7,8 @@ var blueprintFind = require("../../node_modules/sails/lib/hooks/blueprints/actio
 	blueprintRemove = require("../../node_modules/sails/lib/hooks/blueprints/actions/remove");
 
 /*
-* Because of its multidomain behavior, there are several use cases 
-* that require overriding the behaivior of the sails blueprints.
+* Because of its multi-domain behavior, there are several use cases 
+* that require overriding the behavior of the sails blueprints.
 * This service allows ups to make changes in the controller and then call the 
 * default services for processing the request. 
 */

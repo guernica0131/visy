@@ -1,6 +1,6 @@
 {
 	"Welcome": "Welcome",
 	"A brand new app.": "A brand new app.",
-	"Objects restrict": "Your role is not permitted to view {{model}} objects",
-	"Model restrict" : "Your role is not permitted to view this object"
+	"Objects restrict": "Your role is not permitted to {{action}} {{model}} objects",
+	"Model restrict" : "Your role is not permitted to {{action}} this {{model}} object"
 }

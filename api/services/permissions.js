@@ -12,67 +12,87 @@ var Q = require('q');
 module.exports = {
 
     /*
-     * This object contains the access controll for our controllers
+     * This object contains the access control for our controllers
      */
 
     controllers: {
 
-        domain: {
-
-            find: function(req, res) {
-                // first we need to pull the user. 
-                var sessionUser = req.user, 
-                    user = req.param('user') || sessionUser.id; // if we have a user param, we default
-
-                
-                // debugging
-                // res.locals.can['can_find_domain'] = false;
-                // res.locals.can['can_find_own_domain'] = true;
-
-                // base case:: if the user is permitted to find domains. Do it
-                if (res.locals.can['can_find_domain']) {
-                    return prints.find(req, res);
-                }
-                // now if we can find our own domains
-                else if (res.locals.can['can_find_own_domain']) {
-                    // we used the findOwn method to check
-                    prints.findOwn({
-                        model: 'domain',
-                        id: req.param('id'),
-                        user: user
-                    }, function(err, response) {
-                        // if error. We return
-                        if (err)
-                            return res.serverError(err);
-                        // if there is another error, we assume the user is forbidden
-                        if (_.isObject(response) && response.error)
-                            return res.forbidden(req.__(response.error))
-                        // if it is an array we adjust the query for only those
-                        // domains that the user owns
-                        if (_.isArray(response)) {  
-                            req.params.all()['where'] = {
-                                id: response
-                            };
-
-                        }
-                        // we return the query 
-                        return prints.find(req, res);
-
-                    });
+        rules: {
 
 
-                } else {
-                    // we forbid the user to view the domain model
-                    return res.forbidden(req.__('Model restrict', {
-                        model: 'Domain'
-                    }));
-                }
+
+        },
+
+       /*
+        * The owner function ensure that an action only occurs on a model that 
+        * is owned by the specified user. For example. Users with can_view_own_domain
+        * are restricted to their specific domains
+        *
+        * @param {Object} req - request object
+        * @param {Object} res - response object
+        */
+        owner: function(req, res) {
+            // first we need to pull the user. 
+            var sessionUser = req.user,
+                user = req.param('user') || sessionUser.id, // if we have a user params, we default
+                action = req.options.action.replace('One', ''),
+                model = req.options.model;
+
+            // debugging
+            // res.locals.can['can_' + action + '_' + model] = false;
+            // res.locals.can['can_find_own_domain'] = true;
+
+            // base case:: if the user is permitted to find objects. Do it
+            if (res.locals.can['can_' + action + '_' + model]) {
+                return prints[action](req, res);
+            }
+            // now if we can find our own object
+            else if (res.locals.can['can_' + action + '_own_' + model]) {
+                // we used the findOwn method to check
+                prints.findOwn({
+                    model: model,
+                    id: req.param('id'),
+                    user: user,
+                    action: action
+                }, function(err, response) {
+                    // if error. We return
+                    if (err)
+                        return res.serverError(err);
+                    // if there is another error, we assume the user is forbidden
+                    if (_.isObject(response) && response.error)
+                        return res.forbidden(req.__(response.error, {
+                                action: action,
+                                model: model
+                            }))
+                            // if it is an array we adjust the query for only those
+                            // domains that the user owns
+                    if (_.isArray(response)) {
+                        req.params.all()['where'] = {
+                            id: response
+                        };
+
+                    }
+                    // we return the query 
+                    return prints[action](req, res);
+
+                });
 
 
+            } else {
+                // we forbid the user to view the domain model
+                return res.forbidden(req.__('Object restrict', {
+                    model: model,
+                    action: action
+                }));
             }
 
 
-        }
+        },
+
+
+
+
+
 
 
     },
@@ -100,7 +120,7 @@ module.exports = {
 
             return cans;
         }
-        // make sure these are actual permisison
+        // make sure these are actual permission
         // Permission.findByKey(keys).populate('roles').then(function(permissions) {
         //     return permissions;  
         // });
