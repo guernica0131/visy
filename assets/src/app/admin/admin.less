@@ -1,0 +1,97 @@
+.admin {
+	
+	
+	.domain-teaser {
+		width: 300px;
+		height: 300px;
+		cursor: pointer;
+		
+		overflow:hidden;
+		background-color: @gray-light;
+		margin: 10px;
+		text-align: center;
+		position: relative;
+		.background-image {
+			position: absolute;
+			
+			margin-left: -5px;
+			z-index: 0;
+			max-width: 100%;
+			&.fa {
+				left: 18px;
+				top: 50px;
+				margin: 0;
+				padding: 0;
+				font-size: 250px;
+			}
+		}
+
+		.title {
+			position: relative;
+			z-index: 1;
+			color:  @gray-lighter;
+			
+			padding: 10px;
+			margin-left: -5px;
+			margin-right: -5px;	
+
+			&.black {
+				.rgba(black, 0.6);
+			}
+
+			&.primary {
+				.rgba(@brand-primary, 0.6);
+			}
+
+			&.default {
+				.rgba(red, 0.6);	
+			}
+
+			&.info {
+				.rgba(@brand-info, 0.6);
+			}
+
+			&.warning {
+				.rgba(@brand-warning, 0.6);
+			}
+
+			&.danger {
+				.rgba(@brand-danger, 0.6);
+			}
+
+			&.success {
+				.rgba(@brand-success, 0.6);
+			}
+
+		}
+
+		.create-button {
+			//position: absolute;
+			padding-top: 20px;
+			// background-color: red;
+			//margin-left: auto;
+    		//margin-right: auto;
+    		
+
+    		
+
+
+
+
+			.fa {
+				.transition(opacity 300ms ease);
+				color: white;
+				cursor: pointer;
+				//padding: 0;
+				//margin: 0;
+				.opacity(0.6);
+				font-size: 200px;
+				&:hover {
+					.opacity(1);
+				}
+			}
+		}
+
+	}
+
+}

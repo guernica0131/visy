@@ -1,35 +1,22 @@
-angular.module('vissy.index', ['ngRoute'])
+angular.module('vissy.index', [])
 
-//     .config( ['$stateProvider', function config( $stateProvider ) {
-//         $stateProvider.state( 'Index', {
-// 		url: '/',
-// 		views: {
-// 			"index": {
-// 				controller: 'IndexCtrl',
-// 				templateUrl: 'index/index.tpl.html'
-// 			}
-// 		}
-// 	});
-// }])
+.config(['$stateProvider', function config($stateProvider) {
 
-.config(['$routeProvider',
-    function($routeProvider) {
-        $routeProvider.when('/', {
-            templateUrl: 'index/index.tpl.html', //'views/service/service.html',
-            controller: 'IndexCtrl',
-            reloadOnSearch: false
-        })
-
-    }
-])
-
+    $stateProvider.state('app.index', {
+        url: '/',
+        views: {
+            'main@app': {
+                controller: 'IndexCtrl',
+                templateUrl: 'index/index.tpl.html'
+            }
+        }
+    });
+}])
 
 .controller('IndexCtrl', ['$scope',
     function IndexController($scope) {
-       
-    	console.log("Index controller");
 
-   
+        console.log("Index controller");
 
     }
 ]);

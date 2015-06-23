@@ -1,0 +1,36 @@
+<div class="login-page">
+    <div class="nav-buffer"></div>
+    <div class="container">
+        <h1>Login to Visy</h1>
+        <hr/>
+        <thinking ready="ready" message="'Logging in...'">
+            <form role="form" class="form-horizontal" ng-controller="LoginForm">
+                <div class="rowd">
+                    <div class="form-group" ng-class="{'has-error': identError}">
+                        <label for="identifier" class="col-sm-2 control-label">Username or Email</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control input-lg" ng-model="identifier" id="identifier" name="identifier" placeholder="Username or Email">
+                        </div>
+                    </div>
+                    <div class="form-group" ng-class="{'has-error': passError}">
+                        <label for="identifier" class="col-sm-2 control-label" >Password</label>
+                        <div class="col-md-4">
+                            <input class="form-control input-lg" ng-model="password" id="password" type="password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <!-- <label>Username or email
+                <input type="text" class="form-control"  id="identifier" name="identifier" placeholder="Username or Email">
+            </label> -->
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-4">
+                            <button class="btn btn-lg btn-danger" ng-click="authenticate($event)" type="submit" >Login</button>
+                        </div>
+                    </div>
+                    <div class="col-md-offset-2 col-md-4" ng-show="serverResponse">
+                        <p class="text-warning">{{serverResponse}}</p>
+                    </div>
+                </div>
+            </form>
+        </thinking>
+    </div>
+</div>

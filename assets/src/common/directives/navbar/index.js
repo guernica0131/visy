@@ -10,20 +10,21 @@ angular.module('directive.navbar', [])
             restrict: 'E',
             transclude: true,
             scope: true,
-            controller: ["$scope", "$element", 'config', 'lodash',
-                function($scope, $element, config, lodash) {
+            controller: ["$scope", "$element", 'config', '$window', '$state',
+                function($scope, $element, config, $window, $state) {
 
                     var user = new Authenticate.User();
                     // we send the authentication data
                     $scope.authenticate = function(e) {
 
-                        if (e.keyCode !== 13 && e.keyCode !== 0)
-                            return;
+
+
+                        // if (e.keyCode !== 13 && e.keyCode !== 0)
+                        //     return;
 
                         //if we are already authenticated, we logout
                         if (user.get('authenticated'))
-                            return user.logout().then(function(res) {});
-
+                            return user.logout().then(function(res) {$state.go('app.index')});
                         // we make sure the values are poplated.
                         // @TODO::  Replace with a proper forms library
                         // ===
@@ -54,6 +55,7 @@ angular.module('directive.navbar', [])
 
                         });
                     };
+
 
                 }
             ],

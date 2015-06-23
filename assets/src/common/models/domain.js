@@ -12,6 +12,8 @@ angular.module('models.domain', ['lodash', 'services', 'ngSails'])
 
         Domain.prototype = Object.create(Model.object.prototype);
 
+        Domain.prototype.constructor = Model.object.prototype.constructor;
+
     	    	
         return Domain;
 

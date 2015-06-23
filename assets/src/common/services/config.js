@@ -12,7 +12,7 @@ angular.module( 'services.config', ['lodash'])
 		siteName: 'Template API',
 		// no trailing slash!
 		siteUrl: '/',
-		apiUrl: '/api',
+		apiUrl: '/api/v1',
 		currentUser: false,
 		brand: 'visy'
 	};

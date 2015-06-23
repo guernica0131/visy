@@ -25,7 +25,7 @@ var fontFilesToInject = [
 // Client-side javascript files to inject in order
 // (uses Grunt-style wildcard/glob/splat expressions)
 var jsFilesToInject = [
-
+    'bower_components/jquery/dist/jquery.min.js',
     'bower_components/angular/angular.js',
     'bower_components/angular-ui-router/release/angular-ui-router.js',
     'bower_components/angular-route/angular-route.js',
@@ -33,23 +33,21 @@ var jsFilesToInject = [
     // Load sails.io before everything else
     'js/dependencies/sails.io.js',
     'bower_components/angular-sails/dist/angular-sails.js',
+    'js/dependencies/**/*.js',
     'bower_components/lodash/dist/lodash.js',
     'bower_components/moment/moment.js',
     'bower_components/angular-moment/angular-moment.js',
     'bower_components/angular-translate/angular-translate.js',
     'bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
     'bower_components/ng-table/ng-table.js',
-    'bower_components/jquery/dist/jquery.min.js',
     'bower_components/isotope/jquery.isotope.js',
     'bower_components/angular-isotope/dist/angular-isotope.js',
     'bower_components/angular-foundation/mm-foundation.js',
     'bower_components/lodash/dist/lodash.js',
     //Load sails.io before everything else
-    'js/dependencies/sails.io.js',
     'bower_components/pluralize/pluralize.js',
     // Dependencies like jQuery, or Angular are brought in here
-    //'js/dependencies/**/*.js',
-
+    
     // All of the rest of your client-side js files
     // will be injected here in no particular order.
     'js/**/*.js',

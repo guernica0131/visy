@@ -173,14 +173,13 @@ module.exports = {
     },
 
     callback: function(req, res) {
-
+      //req.local.passportError
        User.login(req, res, function(err, user) {
                 // If an error was thrown, redirect the user to the login which should
                 // take care of rendering the error messages.
                 var socket = req.isSocket,
                  message;
 
-                 console.log("My error", err);
 
                 if (socket) 
                   var socketId = sails.sockets.id(req.socket);
@@ -192,8 +191,10 @@ module.exports = {
                     if (socket) {
                       sails.sockets.emit(socketId, 'auth', message );
                       return res.badRequest(message);
-                     } else
+                     } else {
                       return res.redirect('/login');
+                     }
+                      
                 }
                 // Upon successful login, send the user to the homepage were req.user
                 // will available.

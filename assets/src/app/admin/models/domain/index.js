@@ -1,38 +1,38 @@
 (function() {
 
-    angular.module('vissy.admin', [
-        'admin.models'
+    angular.module('admin.domain', [
+      //  'admin.models'
     ])
 
     .config(['$stateProvider',
         function($stateProvider) {
 
 
-            $stateProvider.state('app.admin', {
-                url: '/admin',                
+            $stateProvider.state('app.admin.domain', {
+                url: '/domain/:domain',                
                 views: {
                     'main@app': {
-                        controller: 'AdminController',
-                        templateUrl: 'admin/index.tpl.html' //'views/service/service.html',
+                        controller: 'DomainController',
+                        templateUrl: 'admin/models/domain/index.tpl.html' //'views/service/service.html',
                     }
                 },
                 resolve: {
-                    domains: ['DomainModel', '$rootScope', function(DomainModel, $rootScope) {
-                        var domain = new DomainModel($rootScope, 'domains');
-                        return domain.get().then(function(domains) {
-                            return domains;
+                    currentDomain: ['DomainModel', '$rootScope', '$stateParams',  function(DomainModel, $rootScope, $stateParams) {
+                        var domain = new DomainModel($rootScope, 'currentDomain');
+                        return domain.get($stateParams.domain).then(function(domain) {
+                            //console.log("My domin", domain);
+                            return domain;
                         });
                     }]
                 }
             })
 
-
-            .state('app.admin.new', {
-                url: '/new',                
+            .state('app.admin.new.domain', {
+                url: '/domain',                
                 views: {
                     'main@app': {
-                        controller: 'NewDomainController'
-                       // templateUrl: 'admin/domain/index.tpl.html' //'views/service/service.html',
+                        controller: 'NewDomainController',
+                        templateUrl: 'admin/models/domain/index.tpl.html' //'views/service/service.html',
                     }
                 },
                 resolve: {
@@ -47,6 +47,9 @@
                     // }]
                 }
             })
+
+
+
 
             ;
 
@@ -98,29 +101,37 @@
 
 
 
-    .controller('AdminController', ['$scope', 'Authenticate', 'lodash',
+    .controller('DomainController', ['$scope', 'Authenticate', 'lodash', 'currentDomain',
+        function($scope, Authenticate, _, currentDomain) {
+
+            var user = new Authenticate.User();
+
+            $scope.user = user.get('user');
+
+            $scope.currentDomain = currentDomain;
+
+           
+
+        }
+    ])
+
+      .controller('NewDomainController', ['$scope', 'Authenticate', 'lodash',
         function($scope, Authenticate, _) {
 
             var user = new Authenticate.User();
 
             $scope.user = user.get('user');
 
-            $scope.randomizeColor = function(domain) {
-
-                if (domain.color) {
-                    return domain.color;
-                }
-
-                
-                var colors = ['black', 'primary', 'danger', 'warning', 'info', 'success', 'default'],
-                    randomColor = _.random(0, colors.length - 1);
-
-                return domain.color = colors[randomColor];
-
-            };
+           
 
         }
-    ]);
+    ])
+
+
+
+
+
+      ;
 
 
 })();

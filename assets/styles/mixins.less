@@ -1,0 +1,11 @@
+// http://stackoverflow.com/questions/22330853/less-mixin-function-to-change-a-color-hex-to-rgba-to-pass-into-another-mixin
+.rgba(@color, @opacity : 1){
+  background-color:  rgba( red(@color), green(@color), blue(@color), @opacity );
+}
+
+.transition(@transition) {
+	-webkit-transition: @transition; /* Safari */
+	-o-transition: @transition; /* Opera */
+	-moz-transition: @transition; /* firefox */
+    transition: @transition;
+}

@@ -1,5 +1,6 @@
 {
   "generators": {
     "modules": {}
-  }
+  },
+  "apiPrefix": "api/v1"
 }

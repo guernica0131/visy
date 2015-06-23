@@ -83,9 +83,7 @@ angular.module('service.authenticate', ['lodash', 'services', 'ngSails'])
 
             var self = this,
                 deferred = $q.defer();
-            $sails.post('/auth/local', params, function(res) {
-                return deferred.resolve(res); // resolve the response
-            });
+            $sails.post('/auth/local', params).then(deferred.resolve,deferred.reject);
             return deferred.promise;
         };
 
@@ -126,9 +124,7 @@ angular.module('service.authenticate', ['lodash', 'services', 'ngSails'])
             if (space)
                 params.space = space;
 
-            $sails.get('/api/user/can', params, function(res) {
-                return deferred.resolve(res);
-            });
+            $sails.get(config.apiUrl + '/user/can', params).then(deferred.resolve, deferred.reject);
 
 
             return deferred.promise;
@@ -144,14 +140,14 @@ angular.module('service.authenticate', ['lodash', 'services', 'ngSails'])
                 deferred = $q.defer();
 
             var setUp = function() {
-                 $sails.get(self.url + '/user', function(user) {
+                 $sails.get(self.url + '/user').then(function(user) {
                     $rootScope.authInit = true; // we set authinti to trigger
                     return deferred.resolve(user); // those areas of the app waiting on authentication
                 });
             }
 
-            if ($sails.socket.connected) {
-                 setUp();
+            if ($sails._raw.connected) {
+                setUp();
                 return deferred.promise;
             }
 

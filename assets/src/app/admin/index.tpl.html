@@ -1,14 +1,41 @@
-<div>
+<div class="admin">
 
 
+		<div class="nav-buffer"></div>
+		<div class="row ">
+			<div class="col-md-offset-1">
+				<h1>Available Domains, for {{user.first_name}}</h1>
+			</div>
+		</div>
+		<div class="row text-center">
 
-		
-
-	
-		<div class="row">
-			<h1>Visy Admin</h1>
-			<p>Here we define the user's options. If the user is site administrator, then they will see root and their domains</p>	
 			
+			<ul class="list-inline">
+				<li class="domain-teaser" ui-sref="app.admin.domain({domain:d.id})" ng-repeat="d in domains">
+					<div class="teaser-content">
+						<img ng-if="d.brand_image" class="background-image img-responsive" alt="{{d.name}} brand image" ng-src="images/{{d.brand_image}}"></img>
+						<i ng-if="!d.brand_image" class="background-image fa fa-picture-o"></i>
+						<div class="title {{randomizeColor(d)}}">
+							<h4>{{d.name}}</h4>
+						</div>
+					</div>
+
+				</li>
+
+				<li ui-sref="app.admin.new.domain" class="domain-teaser">
+					<div class="teaser-content">
+						<div class="title">
+							<h4>Create a new domain</h4>
+						</div>
+						<div class="create-button">
+							<i class="fa fa-plus-circle fa-5x"></i> 
+						</div>
+
+					</div>
+				</li>
+			</ul>
+
+			<!-- <p>Here we define the user's options. If the user is site administrator, then they will see root and their domains</p>	 -->
 		</div>
 
 

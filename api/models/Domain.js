@@ -21,6 +21,10 @@ module.exports = {
             type: 'string'
         },
 
+        brand_image: {
+            type: 'string',
+        },
+
         key: {
             type: 'string',
             unique: true
@@ -72,6 +76,11 @@ module.exports = {
             collection: 'tag',
             via: 'domains',
             dominant: true
+        },
+
+        visits: {
+            type: 'integer',
+            defaultsTo: 0
         }
 
     },
@@ -130,6 +139,7 @@ module.exports = {
                         name: 'guernica Softworks',
                         key: 'gSoft',
                         creator: 1,
+                        brand_image: 'gsoft_logo.png',
                         hosts: [{
                             path: 'guernicasoftworks.com',
                             name: 'guernica Softworsks',

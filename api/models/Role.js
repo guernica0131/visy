@@ -91,7 +91,6 @@ module.exports = {
 
 
         var dependents = function(err, users) {
-
             // we iterate through the models 
             Object.keys(sails.models).forEach(function(key) {
 

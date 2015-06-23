@@ -294,7 +294,7 @@ passport.loadStrategies = function (req) {
 };
 
 passport.serializeUser(function (user, next) {
-      next(null, user.id);
+    next(null, user.id);
 });
 
 passport.deserializeUser(function (id, next) {

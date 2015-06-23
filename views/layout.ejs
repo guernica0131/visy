@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en" ng-app="visy" ng-controller="AppCtrl">
+<html class="no-js" lang="en" ng-app="visy">
   <head>
-    <title>New Sails App</title>
+    <title><%= title || 'Visy'%></title>
     <meta charset="utf-8" />
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -32,7 +32,6 @@
     -->
 
     <!--STYLES-->
-    <link rel="stylesheet" href="/styles/app.css">
     <link rel="stylesheet" href="/styles/importer.css">
     <!--STYLES END-->
 
@@ -42,61 +41,19 @@
   </head>
 
 
-  <body  class="hide-extras">
+  <body>
 
     <!-- <nav-bar></nav-bar> -->
 
     <%- body %>
 
+    <!--TEMPLATES-->
+    <script type="text/javascript" src="/jst.js"></script>
+    <!--TEMPLATES END-->
 
-
-    <!--
-        Client-side Templates
-        ========================
-
-        HTML templates are important prerequisites of modern, rich client applications.
-        To work their magic, frameworks like Backbone, Angular, Ember, and Knockout require
-        that you load these templates client-side.
-
-        By default, your Gruntfile is configured to automatically load and precompile
-        client-side JST templates in your `assets/templates` folder, then
-        include them here automatically (between TEMPLATES and TEMPLATES END).
-        
-        To customize this behavior to fit your needs, just edit `tasks/pipeline.js`.
-        For example, here are a few things you could do:
-
-            + Import templates from other directories
-            + Use a different template engine (handlebars, jade, dust, etc.)
-            + Internationalize your client-side templates using a server-side
-              stringfile before they're served.
-    -->
-
-  
-
-    <!--
-
-      Client-side Javascript
-      ========================
-
-      You can always bring in JS files manually with `script` tags, or asynchronously
-      on the client using a solution like AMD (RequireJS).  Or, if you like, you can 
-      take advantage of Sails' conventional asset pipeline (boilerplate Gruntfile).
-
-      By default, files in your `assets/js` folder are included here
-      automatically (between SCRIPTS and SCRIPTS END).  Both JavaScript (.js) and
-      CoffeeScript (.coffee) are supported. In production, your scripts will be minified
-      and concatenated into a single file.
-      
-      To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
-      For example, here are a few things you could do:
-          
-          + Change the order of your scripts
-          + Import scripts from other directories
-          + Use a different preprocessor, like TypeScript
-
-    -->
 
     <!--SCRIPTS-->
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="/bower_components/angular-route/angular-route.js"></script>
@@ -108,17 +65,17 @@
     <script src="/bower_components/angular-translate/angular-translate.js"></script>
     <script src="/bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
     <script src="/bower_components/ng-table/ng-table.js"></script>
-    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="/bower_components/isotope/jquery.isotope.js"></script>
     <script src="/bower_components/angular-isotope/dist/angular-isotope.js"></script>
-    <script src="/bower_components/angular-foundation/mm-foundation.js"></script>
     <script src="/bower_components/pluralize/pluralize.js"></script>
     <script src="/src/app/admin/index.js"></script>
+    <script src="/src/app/admin/models/domain/index.js"></script>
     <script src="/src/app/admin/models/index.js"></script>
     <script src="/src/app/admin/models/roles/index.js"></script>
     <script src="/src/app/admin/models/users/index.js"></script>
     <script src="/src/app/app.js"></script>
     <script src="/src/app/index/index.js"></script>
+    <script src="/src/app/login/index.js"></script>
     <script src="/src/app/viewA/index.js"></script>
     <script src="/src/app/viewB/index.js"></script>
     <script src="/src/common/directives/index.js"></script>
@@ -132,16 +89,17 @@
     <script src="/src/common/models/users.js"></script>
     <script src="/src/common/services/authenticate.js"></script>
     <script src="/src/common/services/config.js"></script>
+    <script src="/src/common/services/filters.js"></script>
     <script src="/src/common/services/index.js"></script>
     <script src="/src/common/services/lodash.js"></script>
     <script src="/src/common/services/pluralize.js"></script>
     <script src="/src/common/services/utils.js"></script>
     <!--SCRIPTS END-->
 
-
-    <!--TEMPLATES-->
+    <!--ANGULAR_TEMPLATES-->
     <script type="text/javascript" src="/templates.js"></script>
-    <!--TEMPLATES END-->
+    <!--ANGULAR_TEMPLATES END-->
+  
 
 
   </body>

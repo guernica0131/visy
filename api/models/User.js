@@ -93,6 +93,8 @@ module.exports = {
      */
     can: function(user, keys, space, callback) {
 
+
+
         // we check if we are dealing with and array or a string
         var obj = {};
         var responses = {};
@@ -285,6 +287,9 @@ module.exports = {
 
     login: function(req, res, next) {
         passport.callback(req, res, function(err, user) {
+            
+            if (err) return next(err);
+
             req.login(user, function(err) {
                 if (err) return next(err);
                 user.online = true;
@@ -358,10 +363,9 @@ module.exports = {
         // @TODO:: look at associations
         var associate = function(cb) {
 
-
             Role.findOneByKey('system_admin').exec(function(err, role) {
 
-                //console.log("My Role", role);
+                console.log("My Role", role);
 
                 User.create([{
                         username: 'guernica0131',

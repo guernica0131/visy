@@ -1,10 +1,9 @@
 module.exports = function (grunt) {
 	grunt.registerTask('syncAssets', [
-		//'jst:dev',
+		'jst:dev',
 		'html2js:dev',
 		'less:dev',
 		'sync:dev',
-		'coffee:dev',
-		'compass:dev'
+		'coffee:dev'
 	]);
 };

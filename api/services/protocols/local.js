@@ -145,20 +145,23 @@ exports.login = function(req, identifier, password, next) {
         query.username = identifier;
     }
 
-
-
     User.findOne(query).populate('siterole').exec(function(err, user) {
         
         if (err) return next(err);
 
+        var error = {};
+
         if (!user) {
+            
             if (isEmail) {
                 req.flash('error', 'Error.Passport.Email.NotFound');
+                error = 'The email and password combination is not valid';
             } else {
                 req.flash('error', 'Error.Passport.Username.NotFound');
+                error = 'The username and password combination is not valid';
             }
 
-            return next(null, false);
+            return next(error, false);
         }
 
         Passport.findOne().where({
@@ -173,14 +176,16 @@ exports.login = function(req, identifier, password, next) {
 
                     if (!res) {
                         req.flash('error', 'Error.Passport.Password.Wrong');
-                        return next(null, false);
+                        error  = 'The password entered is not valid';
+                        return next(error, false);
                     } else {
                         return next(null, user);
                     }
                 });
             } else {
                 req.flash('error', 'Error.Passport.Password.NotSet');
-                return next(null, false);
+                error = 'The password has not been set';
+                return next(error, false);
             }
         });
     });

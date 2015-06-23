@@ -1,17 +1,17 @@
 
 
-<div class="page">
-  <div class="off-canvas-wrap" data-offcanvas>
-    <div class="inner-wrap">
+<div class="admin-page">
+  <!-- <div class="off-canvas-wrap" data-offcanvas>
+    <div class="inner-wrap"> -->
       
-    <nav-bar class="hide-for-small"></nav-bar>
+    <nav-bar></nav-bar>
     
     
-    <off-nav></off-nav>
+   
     
-    <a class="exit-off-canvas" href="#"></a>
+    
     <!-- This part contains our in page content -->
-    <div class="main-wrapper overflow-y main-padding">
+    <!-- <div class="main-wrapper overflow-y main-padding"> -->
 
 
       
@@ -36,22 +36,22 @@
       </section> -->
 
       <section role="main" ng-show="authenticated">
-        
+        <div class="container">
           <div ui-view></div>
-        
+        </div>
       </section>
 
 
-      <section role="main" ng-hide="authenticated">
+      <!-- <section role="main" ng-hide="authenticated">
         <div class="row">
 
            <div class="large-7 medium-6 columns">
             <h1 ng-bind-template="Welcome to {{brand}}">Processing...</h1> 
           </div>
         </div>
-      </section>
+      </section> -->
       
-    </div>
-  </div>
-</div>
+    <!-- </div> -->
+  <!-- </div> -->
+<!-- </div> -->
 </div>

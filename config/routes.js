@@ -20,10 +20,12 @@
  * http://sailsjs.org/#/documentation/concepts/Routes/RouteTargetSyntax.html
  */
 
+var sails = require('sails');
 
-
- var routes = {
-
+var routes = {
+  // 
+  // at bootstrap, can't pull from blueprints, use .sailsrc
+  api:  sails.config.apiPrefix,
 
   /***************************************************************************
   *                                                                          *
@@ -49,6 +51,10 @@
     view: 'index'
   },
 
+  '/login': {
+    view: 'index'
+  },
+
   'get /admin*':'SiteController.admin',
   //   'controller': 'SiteController.admin', 
   //    'auth/index'
@@ -56,7 +62,7 @@
 
 
 
-  'get /login': 'AuthController.li',
+  //'get /login': 'AuthController.li',
   'get /logout': 'AuthController.lo',
   'get /register': 'AuthController.register',
 
@@ -68,9 +74,34 @@
   'get /auth/:provider': 'AuthController.provider',
   'get /auth/:provider/callback': 'AuthController.callback',
 
+  /*
+  * Allows us to plug in general routes that can change by changing the api variable
+  */
+  addApiRoutes: function() {
+
+      var routes = {
+
+        'get /{{api}}/domain/set' : 'SiteController.setDomain',
+        'get /{{api}}/:model/permissions' : 'SiteController.permissions',
+        'get /{{api}}/:model/define': 'SiteController.define',
+        'get /{{api}}/:model/count': 'SiteController.count',
+
+        // the following simplifies routing for domainRules
+        'get /{{api}}/domain/:domain/rule/:role?': {model: 'domainrule',  blueprint: 'find'},
+        'post /{{api}}/domain/:domain/rule/:role': {model: 'domainrule',  blueprint: 'create'},
+        '/{{api}}/domain/:domain/rule/:role/permissions/:permission': {model: 'domainrule',  controller: 'DomainRule', action: 'populate'},
+
+      };
+
+      for (r in routes) {
+        var routeKey = r.replace('{{api}}', this.api);
+        this[routeKey] = routes[r];
+      }
+
+      return this;
 
 
-
+  }
 
 
   /***************************************************************************
@@ -83,26 +114,11 @@
   *                                                                          *
   ***************************************************************************/
 
-  // site routes
-  'get /api/domain/set' : 'SiteController.setDomain',
-  'get /api/:model/permissions' : 'SiteController.permissions',
-  'get /api/:model/define': 'SiteController.define',
-  'get /api/:model/count': 'SiteController.count',
 
-  // the following simplifies routing for domainRules
-  'get /api/domain/:domain/rule/:role?': {model: 'domainrule',  blueprint: 'find'},
-  'post /api/domain/:domain/rule/:role': {model: 'domainrule',  blueprint: 'create'},
-  '/api/domain/:domain/rule/:role/permissions/:permission': {model: 'domainrule',  controller: 'DomainRule', action: 'populate'},
   //'put /api/domain/:domain/rule/:role/permissions/:permission': {model: 'domainrule',  controller: 'DomainRule', action: 'populate'},
   //'delete /api/domain/:domain/rule/:role/permissions/:permission': {model: 'domainrule',  controller: 'DomainRule', action: 'depopulate'}
 
 };
 
 
-
-
- 
-
-
-
-module.exports.routes = routes;
+module.exports.routes = routes.addApiRoutes();

@@ -21,7 +21,7 @@
              */
             var _init = function(callback) {
 
-                if ($sails.socket.connected)
+                if ($sails._raw.connected)
                     return callback();
                 // potential logical error. If the connection
                 // happends before this, then what? Need to reconsider the function
@@ -45,12 +45,9 @@
 
 
                 _init(function() {
-                    $sails[method](url, params).success(function(models) {
-                        return deferred.resolve(models);
-                    }).error(function(why) {
-                        return deferred.reject(why);
-                    });
-
+                    $sails[method](url, params)
+                        .success(deferred.resolve)
+                        .error(deferred.reject);
                 });
 
                 return deferred.promise;
@@ -223,8 +220,6 @@
                 var url = this.url + '/count';
 
                 _connect('get', url, params).then(deferred.resolve, deferred.reject);
-
-
 
                 return deferred.promise;
             };

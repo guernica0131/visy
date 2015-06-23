@@ -9,7 +9,6 @@
 module.exports = function (req, res, next) {
 
     req.locale = req.param('lang') ;
-    console.log('localize.js local: ', req.locale);
     next();
 
 };

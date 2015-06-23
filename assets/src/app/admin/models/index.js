@@ -1,15 +1,16 @@
 (function() {
 
     angular.module('admin.models', [
-        'admin.roles'
+        'admin.roles',
+        'admin.domain'
     ])
 
-    .config(['$routeProvider', '$stateProvider', '$urlRouterProvider',
-        function($routeProvider, $stateProvider, $urlRouterProvider) {
+    .config(['$stateProvider', 
+        function($stateProvider) {
 
 
 
-            $urlRouterProvider.when('/admin/models/', '/admin/models');
+           // $urlRouterProvider.when('/admin/models/', '/admin/models');
 
 
             // $urlRouterProvider.when('/admin/models', '/admin/models/');//.when('/admin/models/:/\w/i', '/admin/models/:/\w/i//');

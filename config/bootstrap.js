@@ -39,9 +39,17 @@ module.exports.bootstrap = function(cb) {
                  * @param {Object} err : the error object
                  * @param {Object} model : the newly created object
                  */
-                Seed.prototype.displayCallback = function(err, model) {
-                    if (err) sails.log.error(err);
-                    sails.log(model);
+                Seed.prototype.displayCallback = function(callback) {
+                   
+                    return function(err, model) {
+                        if (err) sails.log.error(err);
+                        sails.log(model);
+
+                        if (callback && _.isFunction(callback)) {
+                            callback();
+                        }
+                    }
+                 
                 };
 
                 /*
@@ -55,8 +63,12 @@ module.exports.bootstrap = function(cb) {
                         error = function(err) {
                             sails.log.error(err);
                             sails.config.bootstrap.seeding = false;
-                            callback();
+                            
+                            if (_.isFunction(callback))
+                                callback();
                         };
+
+
 
                     self.plant().then(function() {
                         self.associate().then(function() {
@@ -88,18 +100,24 @@ module.exports.bootstrap = function(cb) {
                         // function, we ensure it is defined and we can run it
                         if (model.seeds && model.seeds().seed) {
                             seed = model.seeds();
-                            // if the seed parameter is truthy, we plant the seed.
-                            if (seed.plant && _.isFunction(seed.plant))
-                                seed.plant(self.displayCallback);
 
                             if (seed.associate && _.isFunction(seed.associate))
                                 self.associations.push(seed.associate);
+
+                            // if the seed parameter is truthy, we plant the seed.
+                            if (seed.plant && _.isFunction(seed.plant))
+                                seed.plant(self.displayCallback(callback) );
+                            else
+                                callback();
+
+                            
+                        } else {
+                            callback();
                         }
 
-                        callback();
+                        //callback();
                     }, function(err) {
                         if (err) return deferred.reject(err);
-
                         deferred.resolve();
                     })
 
@@ -115,10 +133,11 @@ module.exports.bootstrap = function(cb) {
 
                     var deferred = Q.defer(),
                         self = this;
-
-                    async.forEach(self.associations, function(associate, callback) {
+                    
+                    async.each(self.associations, function(associate, callback) {
+                       
                         // the array contains the associate functions present in the models
-                        associate(self.displayCallback)
+                        associate(self.displayCallback());
                         callback();
                     }, function(err) {
                         if (err) return deferred.reject(err);
@@ -145,27 +164,28 @@ module.exports.bootstrap = function(cb) {
          * @see http://stackoverflow.com/questions/17365444/sails-js-passport-js-authentication-through-websockets#comment31049298_18343226
          */
         function(cb) {
-            var passport = require('passport'),
-                initialize = passport.initialize(),
-                session = passport.session(),
-                http = require('http'),
-                methods = ['login', 'logIn', 'logout', 'logOut', 'isAuthenticated', 'isUnauthenticated'];
+            // pass through, fix is implemented in the policy
+            // var passport = require('passport'),
+            //     initialize = passport.initialize(),
+            //     session = passport.session(),
+            //     http = require('http'),
+            //     methods = ['login', 'logIn', 'logout', 'logOut', 'isAuthenticated', 'isUnauthenticated'];
 
-            sails.removeAllListeners('router:request');
+            // sails.removeAllListeners('router:request');
 
-            sails.on('router:request', function(req, res) {
-                initialize(req, res, function() {
-                    session(req, res, function(err) {
-                        if (err) {
-                            return sails.log.error(err); //res.serverError(err);
-                        }
-                        for (var i = 0; i < methods.length; i++) {
-                            req[methods[i]] = http.IncomingMessage.prototype[methods[i]].bind(req);
-                        }
-                        sails.router.route(req, res);
-                    });
-                });
-            });
+            // sails.on('router:request', function(req, res) {
+            //     initialize(req, res, function() {
+            //         session(req, res, function(err) {
+            //             if (err) {
+            //                 return sails.log.error(err); //res.serverError(err);
+            //             }
+            //             for (var i = 0; i < methods.length; i++) {
+            //                 req[methods[i]] = http.IncomingMessage.prototype[methods[i]].bind(req);
+            //             }
+            //             sails.router.route(req, res);
+            //         });
+            //     });
+            // });
             cb();
         },
 

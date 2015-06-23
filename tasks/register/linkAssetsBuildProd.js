@@ -3,6 +3,7 @@ module.exports = function (grunt) {
 		'sails-linker:prodJsRelative',
 		'sails-linker:prodStylesRelative',
 		'sails-linker:devTpl',
+		'sails-linker:html2js',
 		'sails-linker:prodJsRelativeJade',
 		'sails-linker:prodStylesRelativeJade',
 		'sails-linker:devTplJade'
