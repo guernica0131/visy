@@ -20,31 +20,21 @@
                     domains: ['DomainModel', '$rootScope', function(DomainModel, $rootScope) {
                         var domain = new DomainModel($rootScope, 'domains');
                         return domain.get().then(function(domains) {
-                            return domains;
+                            return domain;
                         });
                     }]
                 }
             })
-
 
             .state('app.admin.new', {
                 url: '/new',                
                 views: {
                     'main@app': {
                         controller: 'NewDomainController'
-                       // templateUrl: 'admin/domain/index.tpl.html' //'views/service/service.html',
                     }
                 },
                 resolve: {
-                    // domains: ['DomainModel', '$rootScope', '$state',  function(DomainModel, $rootScope, $state) {
-
-                    //     console.log("my state" , $state);
-
-                    //     var domain = new DomainModel($rootScope, 'domains');
-                    //     return domain.get().then(function(domains) {
-                    //         return domains;
-                    //     });
-                    // }]
+                 
                 }
             })
 

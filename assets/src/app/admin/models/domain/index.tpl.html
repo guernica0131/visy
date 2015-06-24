@@ -2,5 +2,11 @@
 	<div class="nav-buffer"></div>
 	<div class="container">
 		<h1>{{currentDomain.name}}</h1>
+		<div class="row">
+			<div class="col-md-3">
+				<side-nav class="hide-for-small"></side-nav>
+			</div>
+			<div ui-view="models"></div>
+		</div>
 	</div>
 </div>

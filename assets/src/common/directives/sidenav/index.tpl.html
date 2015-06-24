@@ -3,95 +3,15 @@
   <h5>{{brand}} Options</h5>
   <form>
   <!--  <label>Search Documentation</label> -->
-  <input tabindex="1" id="autocomplete" type="search" placeholder="Search Docs: e.g. forms">
-</form> 
+  <!-- <input tabindex="1" id="autocomplete" type="search" placeholder="Search Docs: e.g. forms"> -->
+ </form> 
 <!-- <a href="/develop/download.html" class=" button expand">Download Foundation</a> -->
 <nav>
-  <ul class="side-nav">
-    <li class="heading">Site Administration</li>
-    <li ng-repeat="a in adminOptions" data-search="{{a.name}}" ng-show="basePermits[a.permit]"><a ui-sref="models.model.render({model: a.route})" ui-sref-active="active">{{a.name}}</a></li>
-    <li class="divider"></li>
-
-    <!-- <li><a href="../index.html" data-search="">Users</a></li>
-    <li><a href="../css.html" data-search="Styles">Roles</a></li>
-    <li><a href="../sass.html" data-search="Sass">Permission</a></li>
-    <li><a href="../sass-files.html" data-search="Sass,Sass - What You Get, How to Use Sass">Sass Files</a></li>
-    <li><a href="../using-sass.html" data-search="Sass,Sass - What You Get, How to Use Sass">Using Sass</a></li>
-    <li><a href="../applications.html" data-search="Rails,Gem">Applications</a></li>
-    <li><a href="../javascript.html" data-search="">JavaScript</a></li>
-    <li><a href="global.html" data-search="Global Styles,Global Mixins,Global Variables,Useful HTML Classes">Global Styles</a></li>
-    <li><a href="kitchen_sink.html" data-search="">Kitchen Sink</a></li>
-    <li><a href="../accessibility.html" data-search="accessibility">Accessibility</a></li>
-    <li><a href="../upgrading.html" data-search="Migration">Upgrading</a></li>
-    <li class="divider"></li> -->
-    <!--     <li class="heading">Structure</li>
-    <li><a href="../media-queries.html" data-search="Breakpoints">Media Queries</a></li>
-    <li><a href="visibility.html" data-search="">Visibility</a></li>
-    <li><a href="grid.html" data-search="">Grid</a></li>
-    <li><a href="block_grid.html" data-search="">Block Grid</a></li>
-    <li><a href="interchange.html" data-search="Responsive Images">Interchange Responsive Content <span class="label">JS</span></a></li>
-    <li><a href="../utility-classes.html" data-search="">Utility Classes</a></li>
-    <li><a href="../javascript-utilities.html" data-search="">Javascript Utilities</a></li>
-    <li><a href="rtl.html" data-search="RTL">Right-to-Left Support</a></li>
-    <li class="divider"></li>
-    <li class="heading">Navigation</li>
-    <li><a href="offcanvas.html" data-search="Off Canvas">Off-canvas <span class="label">JS</span></a></li>
-    <li><a href="topbar.html" data-search="Nav Bar,Navigation,Sticky">Top Bar <span class="label">JS</span></a></li>
-    <li><a href="icon-bar.html" data-search="">Icon Bar</a></li>
-    <li><a href="sidenav.html" data-search="">Side Nav</a></li>
-    <li><a href="magellan.html" data-search="Scrollspy">Magellan Sticky Nav <span class="label">JS</span></a></li>
-    <li><a href="subnav.html" data-search="">Sub Nav</a></li>
-    <li><a href="breadcrumbs.html" data-search="Navigation Path,Cookie Crumb">Breadcrumbs</a></li>
-    <li><a href="pagination.html" data-search="">Pagination</a></li>
-    <li class="divider"></li>
-    <li class="heading">Media</li>
-    <li><a href="orbit.html" data-search="Carousel,Slider,Slideshow">Orbit Slider <span class="label">JS</span></a></li>
-    <li><a href="thumbnails.html" data-search="Images">Thumbnails</a></li>
-    <li><a href="clearing.html" data-search="Responsive Lightbox,Lightbox">Clearing Lightbox <span class="label">JS</span></a></li>
-    <li><a href="flex_video.html" data-search="Responsive Video">Flex Video</a></li>
-    <li class="divider"></li>
-    <li class="heading">Forms</li>
-    <li><a href="forms.html" data-search="">Forms</a></li>
-    <li><a href="switch.html" data-search="">Switches</a></li>
-    <li><a href="range_slider.html" data-search="Range Slider">Range Sliders <span class="label">JS</span></a></li>
-    <li><a href="abide.html" data-search="Form Validation,Field Validation">Abide Validation <span class="label">JS</span></a></li>
-    <li class="divider"></li>
-    <li class="heading">Buttons</li>
-    <li><a href="buttons.html" data-search="">Buttons</a></li>
-    <li><a href="button_groups.html" data-search="Button Bar">Button Groups</a></li>
-    <li><a href="split_buttons.html" data-search="">Split Buttons <span class="label">JS</span></a></li>
-    <li><a href="dropdown_buttons.html" data-search="">Dropdown Buttons <span class="label">JS</span></a></li>
-    <li class="divider"></li>
-    <li class="heading">Typography</li>
-    <li><a href="typography.html" data-search="Typography,Type-setting,Composition">Type</a></li>
-    <li><a href="inline_lists.html" data-search="Lists">Inline Lists</a></li>
-    <li><a href="labels.html" data-search="Tags">Labels</a></li>
-    <li><a href="keystrokes.html" data-search="">Keystrokes</a></li>
-    <li class="divider"></li>
-    <li class="heading">Callouts &amp; Prompts</li>
-    <li><a href="reveal.html" data-search="Modal">Reveal Modal <span class="label">JS</span></a></li>
-    <li><a href="alert_boxes.html" data-search="Error,Success,Warning">Alerts <span class="label">JS</span></a></li>
-    <li><a href="panels.html" data-search="Wells">Panels</a></li>
-    <li><a href="tooltips.html" data-search="Popover">Tooltips <span class="label">JS</span></a></li>
-    <li><a href="joyride.html" data-search="Tooltip Tour,Guider,Tooltip Walk-through">Joyride <span class="label">JS</span></a></li>
-    <li class="divider"></li>
-    <li class="heading">Content</li>
-    <li><a href="dropdown.html" data-search="">Dropdowns <span class="label">JS</span></a></li>
-    <li><a href="pricing_tables.html" data-search="">Pricing Tables</a></li>
-    <li><a href="progress_bars.html" data-search="">Progress Bars</a></li>
-    <li><a href="tables.html" data-search="">Tables</a></li>
-    <li><a href="accordion.html" data-search="">Accordion <span class="label">JS</span></a></li>
-    <li><a href="tabs.html" data-search="">Tabs <span class="label">JS</span></a></li>
-    <li><a href="equalizer.html" data-search="">Equalizer <span class="label">JS</span></a></li>
-    <li class="divider"></li>
-    <li class="heading">Support</li>
-    <li><a href="../changelog.html" data-search="">Changelog</a></li>
-    <li><a href="../compatibility.html" data-search="">Compatibility</a></li>
-    <li class="divider"></li>
-    <li class="heading">Older Docs</li>
-    <li><a href="/docs/v/4.3.2/" data-search="">Foundation 4</a></li>
-    <li><a href="/docs/v/3.2.5/" data-search="">Foundation 3</a></li>
-    <li><a href="/docs/v/2.2.1/" data-search="">Foundation 2</a></li> -->
+  <p class="heading">Domain Administration</p><br/>
+  <ul class="list-group" >
+    
+    <li class="list-group-item" ng-repeat="a in adminOptions" data-search="{{a.name}}" ng-show="basePermits[a.permit]"><a ui-sref="models.model.render({model: a.route})" ui-sref-active="active">{{a.name}}</a></li>
+    
   </ul>
 </nav>
 </div>

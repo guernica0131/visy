@@ -20,8 +20,8 @@
             $stateProvider.state('app', {
                 resolve: {
                     init: ['Visy', function(Visy) {
-                        var visy = new Visy();
-                        return visy.init().then(function(res) {
+
+                        return Visy.init().then(function(res) {
                             return res;
                         }, function(why) {
                             return why;
@@ -40,106 +40,43 @@
         }
     ])
 
-    .service('Visy', ['$rootScope', '$http', '$q', 'CAN', 'Authenticate', 'utils',
-        function($rootScope, $http, $q, CAN, Authenticate, utils) {
-
-
-            /*
-             * Our constructor for our visy object
-             */
-            var Visy = function(params) {
-                this.permits = [];
-                this.all = CAN().all;
-            };
-
+    .service('Visy', ['$rootScope', '$http', '$q', 'Authenticate', 'utils',
+        function($rootScope, $http, $q, Authenticate, utils) {
             /*
              * init 
              * @description: used to bring in the user, domain, and
              * access control. 
              * @return {Promise} 
              */
-            Visy.prototype.init = function() {
+            this.init = function() {
                 var deferred = $q.defer();
-
-                $rootScope.ready = false;
-                $rootScope.$broadcast('ready', false);
-
-                $rootScope.basePermits = {}; // @TDOD:: need to consider if this is needed in later versions
-                $rootScope.permits = {};
-
                 var self = this;
-
-                $rootScope.adminOptions = this.all; // @TODO:: Simply
-
-                // we are going to ask the api if the user has permission
-                // to access these following permits
-                self.all.forEach(function(can, i) {
-                    self.permits.push(can.permit);
-                });
-
-
                 // @TODO:: consider
                 var authenticate = function(domain) {
 
-                    // we may need the domain parameter at some point
-                    self.setAuthenticate(function(err, res) {
-                        if (err) {
-                            $rootScope.basePermits = {};
-                            $rootScope.permits = {};
+                    new Authenticate.User(true, function(u, space) {
+                        // it's simply pulling the user for a
+                        // page load event
+                        if (!u.verb)
+                            return deferred.resolve(u);
 
-                            return deferred.reject({
-                                err:err,
-                                domain: domain
-                            });
+                        // this means we have a socket event and can do site-level cleanup
+                        // @TODO
+                        switch (u.verb) {
+                            case 'login':
+                                break;
+                            case 'logout':
+                                break;
+                            default:
                         }
 
-
-                        $rootScope.basePermits = res;
-                        $rootScope.ready = true;
-                        $rootScope.$broadcast('ready', true);
-
-                        //permitted('domain');
-                        deferred.resolve({
-                            res: res,
-                            domain: domain
-                        });
                     });
 
                 };
 
-                self.setDomain().then(authenticate, console.error);
-
-
+                this.setDomain().then(authenticate, console.error);
 
                 return deferred.promise;
-
-            };
-
-            /*
-             * setAuthenticate
-             *
-             * @description : pulls the authentication data
-             * @param {function} callback - calls back when complete
-             * @todo ::: consider as a promise
-             */
-            Visy.prototype.setAuthenticate = function(callback) {
-
-                var self = this;
-
-                new Authenticate.User(true, function(u, space) {
-                    // for permission testing
-                    var user = new Authenticate.User();
-                    if (user.get('user') && user.get('user').id) { 
-                        user.can(self.permits).then(function(res) {
-                            callback(null, res.data);
-                        }, function(why) {
-                            callback(why);
-                        });
-                    } else {
-                        callback('User is unauthenticated.');
-                    }
-
-                });
 
             };
 
@@ -150,10 +87,10 @@
              * @param {function} callback - calls back when complete
              * @todo ::: will need considerable testing
              */
-            Visy.prototype.setDomain = function() {
+            this.setDomain = function() {
                 var deferred = $q.defer(),
                     url = utils.prepareUrl('domain') + '/set';
-
+                // cannot pull using sockets
                 $http.get(url, {
                         establish: true
                     })
@@ -161,11 +98,7 @@
                     .error(deferred.reject);
 
                 return deferred.promise;
-
             };
-
-
-            return Visy;
 
         }
     ])
@@ -184,71 +117,13 @@
             $scope.$log = $log.log;
 
             $scope.trust = function(content) {
-              return $sce.trustAsHtml(content);
+                return $sce.trustAsHtml(content);
             };
 
 
 
         }
     ])
-
-
-    .constant('CAN', function() {
-
-        var all = [{
-                permit: 'can_find_user',
-                name: 'Users',
-                model: 'user',
-                route: 'users'
-            }, {
-                permit: 'can_find_role',
-                name: 'Roles',
-                model: 'role',
-                route: 'roles'
-            }, {
-                permit: 'can_find_permission',
-                name: 'Permissions',
-                model: 'permission',
-                route: 'permissions'
-            },
-            //  { // I a removing because a domain should be done at the site level
-            //     permit: 'can_find_domain',
-            //     name: 'Domains',
-            //     model: 'domain',
-            //     route: 'domains'
-            // }, 
-            {
-                permit: 'can_find_portal',
-                name: 'Portals',
-                model: 'portal',
-                route: 'portals'
-            }, {
-                permit: 'can_find_collection',
-                name: 'Collections',
-                model: 'collection',
-                route: 'collections'
-            }, {
-                permit: 'can_find_document',
-                name: 'Documents',
-                model: 'document',
-                route: 'documents'
-            }, {
-                permit: 'can_find_tag',
-                name: 'Tags',
-                model: 'tag',
-                route: 'tags'
-            }, {
-                permit: 'can_find_category',
-                name: 'Categories',
-                model: 'category',
-                route: 'categories'
-            }
-        ];
-
-        return {
-            all: all
-        }
-    })
 
     .directive('thinking', [function() {
 
@@ -261,7 +136,7 @@
             },
             transclude: true,
             controller: function($scope) {
-              //  console.log("Thinking", $scope.ready);
+                //  console.log("Thinking", $scope.ready);
             }
         }
 
@@ -271,7 +146,7 @@
     ;
 
 
-    angular.module('views', [ 
+    angular.module('views', [
         'vissy.index',
         'vissy.admin',
         'vissy.login'
