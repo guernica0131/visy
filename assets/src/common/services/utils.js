@@ -1,4 +1,4 @@
-angular.module('services.utils', ['lodash'])
+angular.module('services.utils', ['lodash', 'ngSails'])
 
 .service('utils', ['lodash', 'config', '$sails', '$q', function(lodash, config, $sails, $q) {
 

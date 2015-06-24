@@ -4,7 +4,6 @@
 
     angular.module('visy', [
         'ui.router',
-        'ngSails',
         'models',
         'angularMoment',
         'templates-app',
@@ -14,9 +13,9 @@
 
     ]).config(['$locationProvider', '$urlRouterProvider', '$stateProvider',
         function($locationProvider, $urlRouterProvider, $stateProvider) {
-
+            // for HTML5 Mode
             $locationProvider.html5Mode(true).hashPrefix('!');
-
+            // root state
             $stateProvider.state('app', {
                 resolve: {
                     init: ['Visy', function(Visy) {
@@ -44,6 +43,7 @@
         function($rootScope, $http, $q, Authenticate, utils) {
             /*
              * init 
+             *
              * @description: used to bring in the user, domain, and
              * access control. 
              * @return {Promise} 
