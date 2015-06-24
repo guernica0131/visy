@@ -3,7 +3,7 @@
  */
 angular.module('service.authenticate', ['lodash', 'services'])
 
-.service('Authenticate', ['$q', 'lodash', 'utils', 'config', "$rootScope",
+.factory('Authenticate', ['$q', 'lodash', 'utils', 'config', "$rootScope",
     function($q, lodash, utils, config, $rootScope) {
 
         var permissions = {};

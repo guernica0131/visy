@@ -1,6 +1,6 @@
 angular.module('models.user', ['lodash', 'services'])
 
-.service('UserModel', ['$q', 'lodash', "Model",
+.factory('UserModel', ['$q', 'lodash', "Model",
     function($q, lodash, Model) {
 
 

@@ -1,6 +1,6 @@
 angular.module('models.role', ['lodash', 'services'])
 
-.service('RoleModel', ['$q', 'lodash', 'utils', "Model",
+.factory('RoleModel', ['$q', 'lodash', 'utils', "Model",
     function($q, lodash, utils, Model) {
 
 

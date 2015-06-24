@@ -1,6 +1,6 @@
 angular.module('models.permission', ['lodash'])
 
-.service('PermissionModel', ['$q', 'lodash', "Model",
+.factory('PermissionModel', ['$q', 'lodash', "Model",
     function($q, lodash, Model) {
 
 

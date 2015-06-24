@@ -3,7 +3,7 @@
  * The user auth function functionality should be moved to any other directive.
  */
 angular.module('directive.navbar', [])
-
+// inject authenticate here in case we need it for the link function
 .directive('navBar', ["Authenticate",
     function(Authenticate) {
         return {

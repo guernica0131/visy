@@ -13,7 +13,7 @@
 
 
 
-    .service('Model', ['$q', 'lodash', 'utils', '$timeout', 'Authenticate',
+    .factory('Model', ['$q', 'lodash', 'utils', '$timeout', 'Authenticate',
         function($q, lodash, utils, $timeout, Authenticate) {
 
             /*

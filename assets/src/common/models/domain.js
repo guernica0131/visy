@@ -1,6 +1,6 @@
 angular.module('models.domain', ['lodash', 'services'])
 
-.service('DomainModel', ['$q', 'lodash', "Model",
+.factory('DomainModel', ['$q', 'lodash', "Model",
     function($q, lodash, Model) {
 
 
