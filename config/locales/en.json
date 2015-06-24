@@ -2,5 +2,6 @@
 	"Welcome": "Welcome",
 	"A brand new app.": "A brand new app.",
 	"Objects restrict": "Your role is not permitted to {{action}} {{model}} objects",
-	"Model restrict" : "Your role is not permitted to {{action}} this {{model}} object"
+	"Model restrict" : "Your role is not permitted to {{action}} this {{model}} object",
+	"Lacks Permission": "Your role lacks the required permissions for this action"
 }
