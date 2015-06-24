@@ -5,7 +5,6 @@
     angular.module('visy', [
         'ui.router',
         'models',
-        'angularMoment',
         'templates-app',
         'services',
         'views',
