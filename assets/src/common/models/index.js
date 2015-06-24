@@ -13,23 +13,13 @@
 
 
 
-    .service('Model', ['$q', 'lodash', 'utils', '$sails', '$timeout', 'Authenticate',
-        function($q, lodash, utils, $sails, $timeout, Authenticate) {
+    .service('Model', ['$q', 'lodash', 'utils', '$timeout', 'Authenticate',
+        function($q, lodash, utils, $timeout, Authenticate) {
 
             /*
              * Privates
              */
-            var _init = function(callback) {
-
-                if ($sails._raw.connected)
-                    return callback();
-                // potential logical error. If the connection
-                // happends before this, then what? Need to reconsider the function
-                $sails.on('connect', function() {
-                    callback();
-                });
-
-            };
+    
             /*
              * _connect
              *
@@ -40,17 +30,8 @@
              * @return {promise} resolved once we get a valid response from the web server
              */
             var _connect = function(method, url, params) {
-
-                var deferred = $q.defer();
-
-
-                _init(function() {
-                    $sails[method](url, params)
-                        .success(deferred.resolve)
-                        .error(deferred.reject);
-                });
-
-                return deferred.promise;
+                // utils.connected is a promise
+                return utils.connect(method, url, params);
             };
 
 
@@ -442,10 +423,7 @@
              * @param {function} callback : calback that will be registered
              */
             Model.prototype.register = function(callback) {
-                var self = this;
-                _init(function() {
-                    $sails.on(self.model, callback);
-                });
+                utils.register(this.model, callback);
             };
 
             return {
@@ -636,7 +614,7 @@
                     this.$scope.count = {};
 
                 model.count({domain: self.domain}).then(function(c) {
-                    console.log(c);
+                    // console.log(c);
                     self.$scope.count[self.mName] = c.count;
                 });
 
@@ -707,9 +685,6 @@
                     return;
 
                 var self = this;
-
-
-
                 // if we have a new object, we need to do a bit more
                 if (model.editor.isNew) {
 

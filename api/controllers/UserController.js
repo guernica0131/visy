@@ -54,7 +54,7 @@ module.exports = {
 
         if (_.isObject(user))
             user = user.id;
-
+        // make this a promise
         User.findOneById(user).populate('siterole').exec(function(err, user) {
             if (err)
                 res.serverError("There was an error processing this user");

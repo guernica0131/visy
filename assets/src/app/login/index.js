@@ -59,13 +59,13 @@
                 // now we login
                 user.login(creds).then(function(res) {
 
-                    console.log("MY RESPONSE", res);
+                    // console.log("MY RESPONSE", res);
 
                     $scope.$parent.$parent.ready = true;
                     
-                    var data = res.data;
+                    var data = res;
                     
-                    if (!data.user) 
+                    if (!res.user) 
                         return $scope.badCredentials = true;
                     
                     $scope.badCredentials = false;
@@ -75,7 +75,8 @@
                     $state.go('app.admin');
 
                 }, function(why) {
-                    $scope.serverResponse = why.data.error;
+                    console.error(why);
+                    $scope.serverResponse = why.error;
                     $scope.$parent.$parent.ready = true;
                 });
             };

@@ -4,10 +4,7 @@
 	'use strict';
 
 
-	angular.module('services.fliters', [])
-
-
-
+	angular.module('services.filters', [])
 
 
 

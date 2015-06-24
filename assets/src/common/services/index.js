@@ -3,5 +3,6 @@ angular.module('services', [
 	'services.config',
 	'services.utils',
 	'service.authenticate',
-	'service.plural'
+	'service.plural',
+	'services.filters'
 ]);

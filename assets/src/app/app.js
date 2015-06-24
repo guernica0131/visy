@@ -11,21 +11,10 @@
         'services',
         'views',
         'directives',
-        //'rxDataTable',
-        //'ngTable',
+
     ]).config(['$locationProvider', '$urlRouterProvider', '$stateProvider',
         function($locationProvider, $urlRouterProvider, $stateProvider) {
 
-            // $locationProvider.html5Mode(true).hashPrefix('!');
-            // // trailing slash issue https://github.com/angular-ui/ui-router/issues/50
-            // $urlRouterProvider.rule(function($injector, $location) {
-            //     var re = /(.+)(\/+)(\?.*)?$/
-            //     var path = $location.url();
-            //     if (re.test(path)) {
-            //         return path.replace(re, '$1$3')
-            //     }
-            //     return false;
-            // });
             $locationProvider.html5Mode(true).hashPrefix('!');
 
             $stateProvider.state('app', {
@@ -44,24 +33,10 @@
                 controller: 'AppCtrl',
                 templateUrl: 'index.tpl.html'
 
-            });
+            })
 
 
-           // $urlRouterProvider.otherwise('/');
-
-            // .config( ['$stateProvider', function config( $stateProvider ) {
-            //         $stateProvider.state( 'Index', {
-            //      url: '/',
-            //      views: {
-            //          "index": {
-            //              controller: 'IndexCtrl',
-            //              templateUrl: 'index/index.tpl.html'
-            //          }
-            //      }
-            //  });
-            // }])
-
-
+            ;
         }
     ])
 
@@ -118,9 +93,12 @@
                             });
                         }
 
+
                         $rootScope.basePermits = res;
                         $rootScope.ready = true;
                         $rootScope.$broadcast('ready', true);
+
+                        //permitted('domain');
                         deferred.resolve({
                             res: res,
                             domain: domain
@@ -129,11 +107,7 @@
 
                 };
 
-                self.setDomain().then(function(domain) {
-                    authenticate(domain);
-                }, function(why) {
-                    console.error(why);
-                });
+                self.setDomain().then(authenticate, console.error);
 
 
 
@@ -155,9 +129,6 @@
                 new Authenticate.User(true, function(u, space) {
                     // for permission testing
                     var user = new Authenticate.User();
-                    //console.log("User auth boostrap", user.get('user'));
-                    
-
                     if (user.get('user') && user.get('user').id) { 
                         user.can(self.permits).then(function(res) {
                             callback(null, res.data);
@@ -290,7 +261,7 @@
             },
             transclude: true,
             controller: function($scope) {
-                console.log("Thinking", $scope.ready);
+              //  console.log("Thinking", $scope.ready);
             }
         }
 
